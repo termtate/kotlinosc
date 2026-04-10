@@ -1,0 +1,530 @@
+public final class io/github/termtate/kotlinosc/arg/ConversionKt {
+	public static final fun toInstant (Lio/github/termtate/kotlinosc/arg/OscTimetag;)Lkotlin/time/Instant;
+	public static final fun toOscArray (Ljava/util/List;)Lio/github/termtate/kotlinosc/arg/OscArray;
+	public static final fun toOscArray ([Lio/github/termtate/kotlinosc/arg/OscArg;)Lio/github/termtate/kotlinosc/arg/OscArray;
+	public static final fun toOscBlob ([B)Lio/github/termtate/kotlinosc/arg/OscBlob;
+	public static final fun toOscBoolean (Z)Lio/github/termtate/kotlinosc/arg/OscArg;
+	public static final fun toOscChar (C)Lio/github/termtate/kotlinosc/arg/OscChar;
+	public static final fun toOscFloat32 (F)Lio/github/termtate/kotlinosc/arg/OscFloat32;
+	public static final fun toOscFloat64 (D)Lio/github/termtate/kotlinosc/arg/OscFloat64;
+	public static final fun toOscInt32 (I)Lio/github/termtate/kotlinosc/arg/OscInt32;
+	public static final fun toOscInt64 (J)Lio/github/termtate/kotlinosc/arg/OscInt64;
+	public static final fun toOscMIDI (Lio/github/termtate/kotlinosc/type/MIDI;)Lio/github/termtate/kotlinosc/arg/OscMIDI;
+	public static final fun toOscRGBA (Lio/github/termtate/kotlinosc/type/RGBA;)Lio/github/termtate/kotlinosc/arg/OscRGBA;
+	public static final fun toOscString (Ljava/lang/String;)Lio/github/termtate/kotlinosc/arg/OscString;
+	public static final fun toOscSymbol (Ljava/lang/String;)Lio/github/termtate/kotlinosc/arg/OscSymbol;
+	public static final fun toOscTimetag (J)Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public static final fun toOscTimetag (Lkotlin/time/Instant;)Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public static final fun toOscTimetag-VKZWuLQ (J)Lio/github/termtate/kotlinosc/arg/OscTimetag;
+}
+
+public abstract interface class io/github/termtate/kotlinosc/arg/OscArg {
+	public static final field Companion Lio/github/termtate/kotlinosc/arg/OscArg$Companion;
+	public abstract fun getTag ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscArg$Companion {
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscArray : io/github/termtate/kotlinosc/arg/OscArg {
+	public static final field LEFT_BRACKET C
+	public static final field RIGHT_BRACKET C
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> ([Lio/github/termtate/kotlinosc/arg/OscArg;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lio/github/termtate/kotlinosc/arg/OscArray;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscArray;Ljava/util/List;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscArray;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getElements ()Ljava/util/List;
+	public fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscBlob : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> ([B)V
+	public final fun component1 ()[B
+	public final fun copy ([B)Lio/github/termtate/kotlinosc/arg/OscBlob;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscBlob;[BILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscBlob;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()[B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscChar : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (C)V
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/github/termtate/kotlinosc/arg/OscChar;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscChar;IILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscChar;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscFalse : io/github/termtate/kotlinosc/arg/OscArg {
+	public static final field INSTANCE Lio/github/termtate/kotlinosc/arg/OscFalse;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscFloat32 : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lio/github/termtate/kotlinosc/arg/OscFloat32;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscFloat32;FILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscFloat32;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscFloat64 : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (D)V
+	public final fun component1 ()D
+	public final fun copy (D)Lio/github/termtate/kotlinosc/arg/OscFloat64;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscFloat64;DILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscFloat64;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()D
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscInfinitum : io/github/termtate/kotlinosc/arg/OscArg {
+	public static final field INSTANCE Lio/github/termtate/kotlinosc/arg/OscInfinitum;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscInt32 : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/github/termtate/kotlinosc/arg/OscInt32;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscInt32;IILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscInt32;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscInt64 : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (J)V
+	public final fun component1 ()J
+	public final fun copy (J)Lio/github/termtate/kotlinosc/arg/OscInt64;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscInt64;JILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscInt64;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscMIDI : io/github/termtate/kotlinosc/arg/OscArg {
+	public synthetic fun <init> (BBBBLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/termtate/kotlinosc/type/MIDI;)V
+	public final fun component1 ()Lio/github/termtate/kotlinosc/type/MIDI;
+	public final fun copy (Lio/github/termtate/kotlinosc/type/MIDI;)Lio/github/termtate/kotlinosc/arg/OscMIDI;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscMIDI;Lio/github/termtate/kotlinosc/type/MIDI;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscMIDI;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()Lio/github/termtate/kotlinosc/type/MIDI;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscNil : io/github/termtate/kotlinosc/arg/OscArg {
+	public static final field INSTANCE Lio/github/termtate/kotlinosc/arg/OscNil;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscRGBA : io/github/termtate/kotlinosc/arg/OscArg {
+	public synthetic fun <init> (BBBBLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/github/termtate/kotlinosc/type/RGBA;)V
+	public final fun component1 ()Lio/github/termtate/kotlinosc/type/RGBA;
+	public final fun copy (Lio/github/termtate/kotlinosc/type/RGBA;)Lio/github/termtate/kotlinosc/arg/OscRGBA;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscRGBA;Lio/github/termtate/kotlinosc/type/RGBA;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscRGBA;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()Lio/github/termtate/kotlinosc/type/RGBA;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscString : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/termtate/kotlinosc/arg/OscString;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscString;Ljava/lang/String;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscString;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscSymbol : io/github/termtate/kotlinosc/arg/OscArg {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/github/termtate/kotlinosc/arg/OscSymbol;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/arg/OscSymbol;Ljava/lang/String;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscSymbol;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscTimetag : io/github/termtate/kotlinosc/arg/OscArg, java/lang/Comparable {
+	public static final field Companion Lio/github/termtate/kotlinosc/arg/OscTimetag$Companion;
+	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun compareTo (Lio/github/termtate/kotlinosc/arg/OscTimetag;)I
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public final fun component1-s-VKNKU ()J
+	public final fun copy-VKZWuLQ (J)Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public static synthetic fun copy-VKZWuLQ$default (Lio/github/termtate/kotlinosc/arg/OscTimetag;JILjava/lang/Object;)Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public final fun getValue-s-VKNKU ()J
+	public fun hashCode ()I
+	public final fun isImmediately ()Z
+	public final fun toLong ()J
+	public fun toString ()Ljava/lang/String;
+	public final fun toULong-s-VKNKU ()J
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscTimetag$Companion {
+	public final fun getIMMEDIATELY ()Lio/github/termtate/kotlinosc/arg/OscTimetag;
+}
+
+public final class io/github/termtate/kotlinosc/arg/OscTrue : io/github/termtate/kotlinosc/arg/OscArg {
+	public static final field INSTANCE Lio/github/termtate/kotlinosc/arg/OscTrue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getTag ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/codec/ExtKt {
+	public static final fun decodeFromByteArray (Lio/github/termtate/kotlinosc/type/OscPacket$Companion;[BIILio/github/termtate/kotlinosc/config/OscConfig$Codec;)Lio/github/termtate/kotlinosc/type/OscPacket;
+	public static synthetic fun decodeFromByteArray$default (Lio/github/termtate/kotlinosc/type/OscPacket$Companion;[BIILio/github/termtate/kotlinosc/config/OscConfig$Codec;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/type/OscPacket;
+	public static final fun encodeToByteArray (Lio/github/termtate/kotlinosc/type/OscPacket;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;)[B
+	public static synthetic fun encodeToByteArray$default (Lio/github/termtate/kotlinosc/type/OscPacket;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;ILjava/lang/Object;)[B
+}
+
+public abstract class io/github/termtate/kotlinosc/config/OscConfig {
+}
+
+public final class io/github/termtate/kotlinosc/config/OscConfig$AddressPattern {
+	public static final field Companion Lio/github/termtate/kotlinosc/config/OscConfig$AddressPattern$Companion;
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/github/termtate/kotlinosc/config/OscConfig$AddressPattern;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/config/OscConfig$AddressPattern;ZILjava/lang/Object;)Lio/github/termtate/kotlinosc/config/OscConfig$AddressPattern;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getStrictAddressPattern ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/config/OscConfig$AddressPattern$Companion {
+	public final fun getDefault ()Lio/github/termtate/kotlinosc/config/OscConfig$AddressPattern;
+}
+
+public final class io/github/termtate/kotlinosc/config/OscConfig$Codec {
+	public static final field Companion Lio/github/termtate/kotlinosc/config/OscConfig$Codec$Companion;
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/github/termtate/kotlinosc/config/OscConfig$Codec;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/config/OscConfig$Codec;ZILjava/lang/Object;)Lio/github/termtate/kotlinosc/config/OscConfig$Codec;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getStrictCodecPayloadConsumption ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/config/OscConfig$Codec$Companion {
+	public final fun getDefault ()Lio/github/termtate/kotlinosc/config/OscConfig$Codec;
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscAddressParseException : io/github/termtate/kotlinosc/exception/OscCodecException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscArrayTagParseException : io/github/termtate/kotlinosc/exception/OscTypeTagParseException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscBufferUnderflowException : io/github/termtate/kotlinosc/exception/OscCodecException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscBundleParseException : io/github/termtate/kotlinosc/exception/OscCodecException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public class io/github/termtate/kotlinosc/exception/OscCodecException : io/github/termtate/kotlinosc/exception/OscException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscDispatchException : io/github/termtate/kotlinosc/exception/OscException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class io/github/termtate/kotlinosc/exception/OscException : java/lang/Exception {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscLifecycleException : io/github/termtate/kotlinosc/exception/OscException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscPacketIllegalBytesException : io/github/termtate/kotlinosc/exception/OscException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscTransportException : io/github/termtate/kotlinosc/exception/OscException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public class io/github/termtate/kotlinosc/exception/OscTypeTagParseException : io/github/termtate/kotlinosc/exception/OscCodecException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/github/termtate/kotlinosc/exception/OscUnknownTypeTagException : io/github/termtate/kotlinosc/exception/OscTypeTagParseException {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/github/termtate/kotlinosc/route/DispatchMode : java/lang/Enum {
+	public static final field ALL_MATCH Lio/github/termtate/kotlinosc/route/DispatchMode;
+	public static final field FIRST_MATCH Lio/github/termtate/kotlinosc/route/DispatchMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/termtate/kotlinosc/route/DispatchMode;
+	public static fun values ()[Lio/github/termtate/kotlinosc/route/DispatchMode;
+}
+
+public final class io/github/termtate/kotlinosc/route/OscRouter : io/github/termtate/kotlinosc/util/OscLogger {
+	public fun <init> ()V
+	public fun getLogTag ()Ljava/lang/String;
+	public final fun off (I)Z
+	public final fun off (Ljava/lang/String;)I
+	public final fun on (Ljava/lang/String;ZLkotlin/jvm/functions/Function2;)I
+	public static synthetic fun on$default (Lio/github/termtate/kotlinosc/route/OscRouter;Ljava/lang/String;ZLkotlin/jvm/functions/Function2;ILjava/lang/Object;)I
+}
+
+public final class io/github/termtate/kotlinosc/transport/OscClient : java/io/Closeable {
+	public fun <init> (Ljava/net/SocketAddress;Lkotlinx/coroutines/CoroutineScope;Lio/github/termtate/kotlinosc/transport/OscTransportHook;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;)V
+	public synthetic fun <init> (Ljava/net/SocketAddress;Lkotlinx/coroutines/CoroutineScope;Lio/github/termtate/kotlinosc/transport/OscTransportHook;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun close ()V
+	public final fun closeAndJoin (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun closeAsync ()Lkotlinx/coroutines/Deferred;
+	public final fun send (Lio/github/termtate/kotlinosc/type/OscPacket;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/github/termtate/kotlinosc/transport/OscServer : io/github/termtate/kotlinosc/util/OscLogger, java/io/Closeable {
+	public fun close ()V
+	public final fun getBindAddress ()Ljava/net/SocketAddress;
+	public fun getLogTag ()Ljava/lang/String;
+	public final fun getRouter ()Lio/github/termtate/kotlinosc/route/OscRouter;
+	public final fun start (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun startAsync ()Lkotlinx/coroutines/Deferred;
+	public final fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun stopAsync ()Lkotlinx/coroutines/Deferred;
+}
+
+public abstract interface class io/github/termtate/kotlinosc/transport/OscTransportHook {
+	public static final field Companion Lio/github/termtate/kotlinosc/transport/OscTransportHook$Companion;
+	public fun onDecodeError ([BLio/github/termtate/kotlinosc/exception/OscCodecException;)V
+	public fun onTransportError (Ljava/lang/Throwable;)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/OscTransportHook$Companion {
+	public final fun getNOOP ()Lio/github/termtate/kotlinosc/transport/OscTransportHook;
+}
+
+public final class io/github/termtate/kotlinosc/transport/OscTransportHook$DefaultImpls {
+	public static fun onDecodeError (Lio/github/termtate/kotlinosc/transport/OscTransportHook;[BLio/github/termtate/kotlinosc/exception/OscCodecException;)V
+	public static fun onTransportError (Lio/github/termtate/kotlinosc/transport/OscTransportHook;Ljava/lang/Throwable;)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscAddressPatternDsl {
+	public fun <init> ()V
+	public final fun getStrictAddressPattern ()Z
+	public final fun setStrictAddressPattern (Z)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscClientDslKt {
+	public static final fun oscClient (Ljava/lang/String;ILkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/OscClient;
+	public static final fun oscClient (Ljava/net/SocketAddress;Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/OscClient;
+	public static synthetic fun oscClient$default (Ljava/lang/String;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/transport/OscClient;
+	public static synthetic fun oscClient$default (Ljava/net/SocketAddress;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/transport/OscClient;
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscClientOptionsBuilder {
+	public fun <init> ()V
+	public final fun codec (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscCodecDsl;
+	public final fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public final fun getTransportHook ()Lio/github/termtate/kotlinosc/transport/OscTransportHook;
+	public final fun setScope (Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun setTransportHook (Lio/github/termtate/kotlinosc/transport/OscTransportHook;)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscCodecDsl {
+	public fun <init> ()V
+	public final fun getStrictCodecPayloadConsumption ()Z
+	public final fun setStrictCodecPayloadConsumption (Z)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscServerDslKt {
+	public static final fun oscServer (Ljava/lang/String;ILkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/OscServer;
+	public static final fun oscServer (Ljava/net/SocketAddress;Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/OscServer;
+	public static synthetic fun oscServer$default (Ljava/lang/String;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/transport/OscServer;
+	public static synthetic fun oscServer$default (Ljava/net/SocketAddress;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/transport/OscServer;
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscServerOptionsBuilder {
+	public fun <init> ()V
+	public final fun addressPattern (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscAddressPatternDsl;
+	public final fun codec (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscCodecDsl;
+	public final fun dispatch (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscServerOptionsBuilder$OscServerDispatchDsl;
+	public final fun getRouter ()Lio/github/termtate/kotlinosc/route/OscRouter;
+	public final fun getScope ()Lkotlinx/coroutines/CoroutineScope;
+	public final fun getTransportHook ()Lio/github/termtate/kotlinosc/transport/OscTransportHook;
+	public final fun route (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/route/OscRouter;
+	public final fun setRouter (Lio/github/termtate/kotlinosc/route/OscRouter;)V
+	public final fun setScope (Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun setTransportHook (Lio/github/termtate/kotlinosc/transport/OscTransportHook;)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscServerOptionsBuilder$OscServerDispatchDsl {
+	public fun <init> ()V
+	public final fun getContinueOnDispatchError ()Z
+	public final fun getDispatchDispatcher ()Lkotlinx/coroutines/CoroutineDispatcher;
+	public final fun getDispatchMode ()Lio/github/termtate/kotlinosc/route/DispatchMode;
+	public final fun getMaxConcurrentDispatches ()I
+	public final fun setContinueOnDispatchError (Z)V
+	public final fun setDispatchDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
+	public final fun setDispatchMode (Lio/github/termtate/kotlinosc/route/DispatchMode;)V
+	public final fun setMaxConcurrentDispatches (I)V
+}
+
+public final class io/github/termtate/kotlinosc/type/DslKt {
+	public static final fun oscBundle (Lio/github/termtate/kotlinosc/arg/OscTimetag;Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/type/OscBundle;
+	public static synthetic fun oscBundle$default (Lio/github/termtate/kotlinosc/arg/OscTimetag;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/type/OscBundle;
+}
+
+public final class io/github/termtate/kotlinosc/type/ExtKt {
+	public static final fun invoke (Lio/github/termtate/kotlinosc/type/OscMessage$Companion;Ljava/lang/String;Ljava/util/List;)Lio/github/termtate/kotlinosc/type/OscMessage;
+	public static final fun invoke (Lio/github/termtate/kotlinosc/type/OscMessage$Companion;Ljava/lang/String;[Lio/github/termtate/kotlinosc/arg/OscArg;)Lio/github/termtate/kotlinosc/type/OscMessage;
+	public static final fun invoke (Lio/github/termtate/kotlinosc/type/OscMessage$Companion;Ljava/lang/String;[Ljava/lang/Object;)Lio/github/termtate/kotlinosc/type/OscMessage;
+}
+
+public final class io/github/termtate/kotlinosc/type/MIDI {
+	public synthetic fun <init> (BBBBLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-w2LRezQ ()B
+	public final fun component2-w2LRezQ ()B
+	public final fun component3-w2LRezQ ()B
+	public final fun component4-w2LRezQ ()B
+	public final fun copy-bW95L_I (BBBB)Lio/github/termtate/kotlinosc/type/MIDI;
+	public static synthetic fun copy-bW95L_I$default (Lio/github/termtate/kotlinosc/type/MIDI;BBBBILjava/lang/Object;)Lio/github/termtate/kotlinosc/type/MIDI;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getData1-w2LRezQ ()B
+	public final fun getData2-w2LRezQ ()B
+	public final fun getPortId-w2LRezQ ()B
+	public final fun getStatus-w2LRezQ ()B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/type/OscBundle : io/github/termtate/kotlinosc/type/OscPacket {
+	public fun <init> (Lio/github/termtate/kotlinosc/arg/OscTimetag;Ljava/util/List;)V
+	public synthetic fun <init> (Lio/github/termtate/kotlinosc/arg/OscTimetag;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lio/github/termtate/kotlinosc/arg/OscTimetag;Ljava/util/List;)Lio/github/termtate/kotlinosc/type/OscBundle;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/type/OscBundle;Lio/github/termtate/kotlinosc/arg/OscTimetag;Ljava/util/List;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/type/OscBundle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getElements ()Ljava/util/List;
+	public final fun getTimeTag ()Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public fun hashCode ()I
+	public final fun isImmediately ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/type/OscBundleBuilder {
+	public fun <init> (Lio/github/termtate/kotlinosc/arg/OscTimetag;)V
+	public final fun bundle (Lio/github/termtate/kotlinosc/arg/OscTimetag;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun bundle$default (Lio/github/termtate/kotlinosc/type/OscBundleBuilder;Lio/github/termtate/kotlinosc/arg/OscTimetag;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun getTimetag ()Lio/github/termtate/kotlinosc/arg/OscTimetag;
+	public final fun message (Ljava/lang/String;Ljava/util/List;)V
+	public final fun message (Ljava/lang/String;[Lio/github/termtate/kotlinosc/arg/OscArg;)V
+	public final fun message (Ljava/lang/String;[Ljava/lang/Object;)V
+	public final fun messageOscArgList (Ljava/lang/String;Ljava/util/List;)V
+}
+
+public final class io/github/termtate/kotlinosc/type/OscMessage : io/github/termtate/kotlinosc/type/OscPacket {
+	public static final field Companion Lio/github/termtate/kotlinosc/type/OscMessage$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/github/termtate/kotlinosc/type/OscMessage;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/type/OscMessage;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/type/OscMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAddress ()Ljava/lang/String;
+	public final fun getArgs ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/type/OscMessage$Companion {
+}
+
+public abstract interface class io/github/termtate/kotlinosc/type/OscPacket {
+	public static final field Companion Lio/github/termtate/kotlinosc/type/OscPacket$Companion;
+}
+
+public final class io/github/termtate/kotlinosc/type/OscPacket$Companion {
+}
+
+public final class io/github/termtate/kotlinosc/type/RGBA {
+	public synthetic fun <init> (BBBBLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-w2LRezQ ()B
+	public final fun component2-w2LRezQ ()B
+	public final fun component3-w2LRezQ ()B
+	public final fun component4-w2LRezQ ()B
+	public final fun copy-bW95L_I (BBBB)Lio/github/termtate/kotlinosc/type/RGBA;
+	public static synthetic fun copy-bW95L_I$default (Lio/github/termtate/kotlinosc/type/RGBA;BBBBILjava/lang/Object;)Lio/github/termtate/kotlinosc/type/RGBA;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getA-w2LRezQ ()B
+	public final fun getB-w2LRezQ ()B
+	public final fun getG-w2LRezQ ()B
+	public final fun getR-w2LRezQ ()B
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class io/github/termtate/kotlinosc/util/OscDsl : java/lang/annotation/Annotation {
+}
+
