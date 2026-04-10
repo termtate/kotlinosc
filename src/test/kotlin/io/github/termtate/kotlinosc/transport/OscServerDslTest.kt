@@ -1,0 +1,132 @@
+package io.github.termtate.kotlinosc.transport
+
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import io.github.termtate.kotlinosc.config.OscConfig
+import io.github.termtate.kotlinosc.route.DispatchMode
+import io.github.termtate.kotlinosc.transport.dsl.OscServerOptionsBuilder
+import io.github.termtate.kotlinosc.transport.dsl.oscServer
+import io.github.termtate.kotlinosc.type.OscMessage
+import java.net.DatagramSocket
+import java.net.InetSocketAddress
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+
+class OscServerDslTest {
+    private fun getAvailablePort(): Int = DatagramSocket(0).use { it.localPort }
+
+    @Test
+    fun `dsl defaults should match osc server options defaults`() {
+        val bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
+
+        val options = OscServerOptionsBuilder().build(bindAddress)
+
+        assertEquals(bindAddress, options.bindAddress)
+        assertEquals(DispatchMode.ALL_MATCH, options.dispatchMode)
+        assertTrue(options.continueOnDispatchError)
+        assertEquals(1, options.maxConcurrentDispatches)
+        assertEquals(Dispatchers.IO, options.dispatchDispatcher)
+        assertEquals(OscConfig.Codec.default, options.codecConfig)
+        assertEquals(OscConfig.AddressPattern.default, options.addressPatternConfig)
+        assertNotNull(options.router)
+    }
+
+    @Test
+    fun `dsl should map dispatch config correctly`() {
+        val bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
+
+        val options = OscServerOptionsBuilder().apply {
+            dispatch {
+                dispatchMode = DispatchMode.FIRST_MATCH
+                continueOnDispatchError = false
+                maxConcurrentDispatches = 4
+                dispatchDispatcher = Dispatchers.Default
+            }
+        }.build(bindAddress)
+
+        assertEquals(DispatchMode.FIRST_MATCH, options.dispatchMode)
+        assertEquals(false, options.continueOnDispatchError)
+        assertEquals(4, options.maxConcurrentDispatches)
+        assertEquals(Dispatchers.Default, options.dispatchDispatcher)
+    }
+
+    @Test
+    fun `dsl route block should register handlers`() = runBlocking {
+        val bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val received = CompletableDeferred<OscMessage>()
+
+        val server = oscServer(bindAddress) {
+            this.scope = scope
+            route {
+                on("/ping") { message ->
+                    received.complete(message)
+                }
+            }
+        }
+        val client = OscClient(bindAddress, scope)
+
+        try {
+            server.start()
+            client.send(OscMessage("/ping"))
+
+            val msg = withTimeout(2_000) { received.await() }
+            assertEquals("/ping", msg.address)
+        } finally {
+            client.closeAndJoin()
+            server.stop()
+            scope.cancel()
+        }
+    }
+
+    @Test
+    fun `dsl socketAddress and ip-port overloads should both work`() = runBlocking {
+        suspend fun runRoundTrip(server: OscServer, target: InetSocketAddress, scope: CoroutineScope) {
+            val received = CompletableDeferred<OscMessage>()
+            server.router.on("/ping") { message ->
+                if (!received.isCompleted) {
+                    received.complete(message)
+                }
+            }
+            val client = OscClient(target, scope)
+            try {
+                server.start()
+                client.send(OscMessage("/ping"))
+                val msg = withTimeout(2_000) { received.await() }
+                assertEquals("/ping", msg.address)
+            } finally {
+                client.closeAndJoin()
+                server.stop()
+            }
+        }
+
+        val port1 = getAvailablePort()
+        val scope1 = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val address1 = InetSocketAddress("127.0.0.1", port1)
+        val server1 = oscServer(address1) {
+            this.scope = scope1
+        }
+
+        val port2 = getAvailablePort()
+        val scope2 = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val server2 = oscServer("127.0.0.1", port2) {
+            this.scope = scope2
+        }
+
+        try {
+            runRoundTrip(server1, address1, scope1)
+            runRoundTrip(server2, InetSocketAddress("127.0.0.1", port2), scope2)
+        } finally {
+            scope1.cancel()
+            scope2.cancel()
+        }
+    }
+}
+
