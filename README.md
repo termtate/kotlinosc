@@ -15,13 +15,13 @@
 
 ## Current Status
 
-- `0.1.0` release content is prepared and ready for first release tag.
+- `0.1.0` is released.
 - Public API is guarded by binary-compatibility checks (`apiCheck` / `apiDump`).
 - Maven Central + GitHub Release automation is configured via GitHub Actions (tag-triggered release).
 
 ## Installation
 
-> Artifact coordinates are finalized and will become available on Maven Central after the first release is published.
+Available on Maven Central.
 
 ### Gradle (Kotlin DSL)
 
