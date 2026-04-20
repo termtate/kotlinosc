@@ -1,5 +1,6 @@
 package io.github.termtate.kotlinosc.codec
 
+import io.github.termtate.kotlinosc.arg.OscTimetag
 import io.github.termtate.kotlinosc.type.OscBundle
 import io.github.termtate.kotlinosc.io.OscByteReader
 import io.github.termtate.kotlinosc.io.OscByteWriter
@@ -36,7 +37,7 @@ internal class OscBundleCodec(private val config: OscConfig.Codec) : OscLogger {
         if (tag != BUNDLE_TAG) {
             throw OscBundleParseException("Invalid bundle tag: $tag")
         }
-        val timeTag = reader.readInt64()
+        val timeTag = reader.readInt64().toULong()
         val elements = buildList {
             while (reader.hasRemaining()) {
                 val elementReader = reader.readSizedPacketReader()
@@ -51,7 +52,7 @@ internal class OscBundleCodec(private val config: OscConfig.Codec) : OscLogger {
                 add(element)
             }
         }
-        return OscBundle(timeTag = timeTag.toOscTimetag(), elements = elements)
+        return OscBundle(timeTag = OscTimetag(timeTag), elements = elements)
     }
 
     internal companion object {

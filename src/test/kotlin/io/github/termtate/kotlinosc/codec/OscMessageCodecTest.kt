@@ -29,6 +29,7 @@ import io.github.termtate.kotlinosc.type.RGBA
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.time.Instant
 import kotlin.time.Clock
 
 class OscMessageCodecTest {
@@ -90,6 +91,22 @@ class OscMessageCodecTest {
                         OscMessage("/child", listOf(OscBlob(byteArrayOf(1, 2, 3))))
                     )
                 )
+            )
+        )
+
+        val bytes = OscPacketCodecImpl.default.encode(packet, OscByteWriter())
+        val decoded = OscPacketCodecImpl.default.decode(OscByteReader(bytes))
+
+        assertEquals(packet, decoded)
+    }
+
+    @Test
+    fun `bundle round trip should preserve modern future timetag`() {
+        val future = Instant.fromEpochSeconds(1_776_680_000, 123_000_000).toOscTimetag()
+        val packet = OscBundle(
+            timeTag = future,
+            elements = listOf(
+                OscMessage("/scheduled", listOf(OscString("future")))
             )
         )
 
