@@ -69,10 +69,7 @@ Examples:
 
 - `{foo,bar}` matches `foo` or `bar`
 - `pre{a,b}post` matches `preapost` or `prebpost`
-
-Current limitation:
-
-- Nested alternation is not supported.
+- `{foo,{bar,baz}}` matches `foo`, `bar`, or `baz`
 
 ## Invalid Patterns (examples)
 

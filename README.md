@@ -153,7 +153,6 @@ client.closeAndJoin()
 
 Not supported yet (planned for future releases):
 
-- Address pattern nested alternation.
 - TCP server/client transport support.
 
 ## Publishing Setup

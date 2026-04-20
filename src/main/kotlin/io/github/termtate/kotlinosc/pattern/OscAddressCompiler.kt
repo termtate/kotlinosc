@@ -58,6 +58,8 @@ private class Cursor(private val s: String) {
     fun eof(): Boolean = i >= s.length
     fun peek(): Char? = if (eof()) null else s[i]
     fun next(): Char = s[i++]
+    fun back(): Char = s[--i]
+    fun previous(): Char = s[i - 1]
     fun match(ch: Char): Boolean = (peek() == ch).also { match -> if (match) i++ }
     fun expect(ch: Char, msg: String) {
         if (peek() != ch) error(msg)
@@ -80,7 +82,7 @@ internal object OscAddressCompiler : OscLogger {
         cursor.next()
 
         while (!cursor.eof()) {
-            val tokens = parseTokens(cursor)
+            val tokens = parseTokens(cursor, emptySet(), slashAllowed = true)
             val segment = flushSegment(tokens)
             if (logger.isTraceEnabled()) {
                 logger.trace {
@@ -112,13 +114,20 @@ internal object OscAddressCompiler : OscLogger {
         )
     }
 
-    private fun parseTokens(cursor: Cursor): Tokens {
+    private fun parseTokens(cursor: Cursor, stopChars: Set<Char>, slashAllowed: Boolean): Tokens {
         val tokens = mutableListOf<Token>()
 
         while (!cursor.eof()) {
             when (val c = cursor.next()) {
-                SEGMENT_SEPARATOR -> {
+                in stopChars -> {
                     return tokens
+                }
+                SEGMENT_SEPARATOR -> {
+                    if (slashAllowed) {
+                        return tokens
+                    } else {
+                        cursor.error("'/' cannot be inside of alternation set")
+                    }
                 }
                 STAR_CHAR -> tokens += Token.Star
                 ANY_CHAR -> tokens += Token.AnyChar
@@ -199,19 +208,19 @@ internal object OscAddressCompiler : OscLogger {
         val branches = mutableListOf<Tokens>()
         var minLen: Int? = null
         var maxLen: Int? = 0
-        var tokens = mutableListOf<Token>()
 
-        fun flushTokens() {
-            if (tokens.isEmpty()) {
+        while (!cursor.eof()) {
+            val branch = parseTokens(cursor, stopChars = setOf(',', '}'), slashAllowed = false)
+            if (branch.isEmpty()) {
                 cursor.error("empty alternation branch")
             }
-            branches += tokens
+            branches += branch
 
             var tokensMinLen = 0
 
             var tokensMaxLen: Int? = 0
 
-            for (t in tokens) {
+            for (t in branch) {
                 tokensMinLen += t.minLen
 
                 if (t.maxLen == null) {
@@ -226,42 +235,25 @@ internal object OscAddressCompiler : OscLogger {
 
             minLen = minLen?.let { minOf(it, tokensMinLen) } ?: tokensMinLen
             maxLen = tokensMaxLen?.let { tMax -> maxLen?.let { max -> maxOf(max, tMax) } }
-            if (logger.isTraceEnabled()) {
-                logger.trace {
-                    "Parsed alternation branch #${branches.size}: tokens=${tokens.size}, branchMinLen=$tokensMinLen, branchMaxLen=${tokensMaxLen ?: "INF"}"
-                }
-            }
 
-            tokens = mutableListOf()
-        }
-
-        while (!cursor.eof()) {
-            when (val c = cursor.next()) {
-                SEGMENT_SEPARATOR -> cursor.error("'/' cannot be inside of alternation set")
-                STAR_CHAR -> tokens += Token.Star
-                ANY_CHAR -> tokens += Token.AnyChar
-                CHAR_CLASS_START -> {
-                    val token = parseCharClass(cursor)
-                    tokens += token
-                }
-                CHAR_CLASS_END -> cursor.error("redundant ] char class bracket")
-                ALTERNATION_START -> cursor.error("nested alternation bracket is unsupported")
+            when (cursor.previous()) {
                 ALTERNATION_END -> {
-                    flushTokens()
-                    return Token.Alternation(branches, minLen!!, maxLen).also { token ->
+                    return Token.Alternation(branches, minLen, maxLen).also { token ->
                         logger.debug {
                             "Parsed alternation: branches=${token.branches.size}, minLen=${token.minLen}, maxLen=${token.maxLen ?: "INF"}"
                         }
                     }
                 }
                 ALTERNATION_SEPARATOR -> {
-                    flushTokens()
+                    continue
                 }
-                else -> tokens += Token.Literal(c)
+                else -> {
+                    cursor.error("Unclosed alternation bracket")
+                }
             }
         }
 
-        throw OscAddressParseException("Unclosed alternation bracket")
+        cursor.error("Unclosed alternation bracket")
     }
 }
 
