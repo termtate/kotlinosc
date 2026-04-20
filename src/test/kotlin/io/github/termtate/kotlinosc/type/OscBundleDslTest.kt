@@ -8,7 +8,6 @@ import io.github.termtate.kotlinosc.arg.OscTimetag
 import io.github.termtate.kotlinosc.arg.toOscTimetag
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Instant

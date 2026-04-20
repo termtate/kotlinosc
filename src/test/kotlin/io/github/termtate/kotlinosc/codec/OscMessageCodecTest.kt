@@ -187,7 +187,7 @@ class OscMessageCodecTest {
 
     @Test
     fun `Timetag boundary test`() {
-        val message = OscMessage("/x", listOf(Clock.System.now().toOscTimetag(), OscTimetag.Companion.IMMEDIATELY))
+        val message = OscMessage("/x", listOf(Clock.System.now().toOscTimetag(), OscTimetag.IMMEDIATELY))
 
         val bytes = OscPacketCodecImpl.default.encode(message, OscByteWriter())
         val decoded = OscPacketCodecImpl.default.decode(OscByteReader(bytes))

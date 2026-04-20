@@ -1,4 +1,8 @@
-﻿# kotlinosc
+# kotlinosc
+
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.termtate.kotlinosc/kotlinosc?style=flat-square)](https://central.sonatype.com/artifact/io.github.termtate.kotlinosc/kotlinosc)
+[![CI](https://github.com/termtate/kotlinosc/actions/workflows/ci.yml/badge.svg)](https://github.com/termtate/kotlinosc/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/termtate/kotlinosc?style=flat-square)](LICENSE)
 
 `kotlinosc` is a Kotlin/JVM OSC (Open Sound Control) library focused on:
 
@@ -12,10 +16,9 @@
 - Lightweight: runtime dependency is only `kotlin-logging`.
 - Broad unit-test coverage.
 
-
 ## Current Status
 
-- `0.1.0` is released.
+- Latest release is available on Maven Central.
 - Public API is guarded by binary-compatibility checks (`apiCheck` / `apiDump`).
 - Maven Central + GitHub Release automation is configured via GitHub Actions (tag-triggered release).
 
@@ -31,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.termtate.kotlinosc:kotlinosc:0.1.0")
+    implementation("io.github.termtate.kotlinosc:kotlinosc:0.2.0")
 }
 ```
 
@@ -43,7 +46,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.termtate.kotlinosc:kotlinosc:0.1.0'
+    implementation 'io.github.termtate.kotlinosc:kotlinosc:0.2.0'
 }
 ```
 
@@ -53,7 +56,7 @@ dependencies {
 <dependency>
   <groupId>io.github.termtate.kotlinosc</groupId>
   <artifactId>kotlinosc</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
@@ -183,7 +186,7 @@ Release publishing command (enables signing):
 
 GitHub Actions release flow:
 
-- Push a tag like `v0.1.0`
+- Push a tag like `v<version>`
 - Workflow publishes artifacts to Maven Central
 - Workflow creates GitHub Release notes from `CHANGELOG.md`
 

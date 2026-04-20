@@ -7,7 +7,6 @@
 }
 
 group = "io.github.termtate.kotlinosc"
-version = "0.1.0"
 
 repositories {
     mavenCentral()

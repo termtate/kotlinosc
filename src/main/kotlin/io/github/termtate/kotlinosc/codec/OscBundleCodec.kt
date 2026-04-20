@@ -5,7 +5,6 @@ import io.github.termtate.kotlinosc.type.OscBundle
 import io.github.termtate.kotlinosc.io.OscByteReader
 import io.github.termtate.kotlinosc.io.OscByteWriter
 import io.github.termtate.kotlinosc.type.OscPacket
-import io.github.termtate.kotlinosc.arg.toOscTimetag
 import io.github.termtate.kotlinosc.config.OscConfig
 import io.github.termtate.kotlinosc.exception.OscBundleParseException
 import io.github.termtate.kotlinosc.util.OscLogger

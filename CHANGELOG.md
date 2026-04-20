@@ -10,6 +10,20 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - No unreleased changes.
 
+## [0.2.0] - 2026-04-21
+### Added
+
+- Runnable examples under `examples/`, including codec, bundle DSL, UDP client/server, routing, and scheduling use cases.
+
+### Changed
+
+- Reworked `OscBundle.toString()` to produce more readable output for nested bundles.
+- Added nested alternation support to OSC address pattern compilation and matching.
+
+### Fixed
+
+- Fixed bundle timetag decoding for modern/future OSC timetag values by preserving the raw 64-bit unsigned value during bundle decode.
+
 ## [0.1.0] - 2026-04-11
 
 ### Added
