@@ -13,12 +13,37 @@ repositories {
     mavenCentral()
 }
 
+val exampleMainClasses = mapOf(
+    "message-codec" to "examples.messagecodec.MainKt",
+    "bundle-dsl" to "examples.bundledsl.MainKt",
+    "udp-client-send" to "examples.udpclientsend.MainKt",
+    "udp-server-route" to "examples.udpserverroute.MainKt",
+    "client-server-roundtrip" to "examples.clientserverroundtrip.MainKt",
+    "address-pattern-routing" to "examples.addresspatternrouting.MainKt",
+    "scheduled-bundle-dispatch" to "examples.scheduledbundledispatch.MainKt",
+)
+
+val examplesSourceSet = sourceSets.create("examples") {
+    java.srcDir("examples")
+    compileClasspath += sourceSets["main"].output
+    runtimeClasspath += output + compileClasspath
+}
+
+configurations.named(examplesSourceSet.implementationConfigurationName) {
+    extendsFrom(configurations["implementation"])
+}
+
+configurations.named(examplesSourceSet.runtimeOnlyConfigurationName) {
+    extendsFrom(configurations["runtimeOnly"])
+}
+
 dependencies {
     implementation(libs.kotlin.logging)
     api(libs.kotlin.coroutines)
     implementation(libs.slf4j.api)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit.jupiter)
+    add(examplesSourceSet.implementationConfigurationName, sourceSets["main"].output)
 }
 
 java {
@@ -33,6 +58,26 @@ kotlin {
 tasks.test {
     useJUnitPlatform {
         excludeTags("interop")
+    }
+}
+
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileExamplesKotlin") {
+    dependsOn(tasks.named("compileKotlin"))
+    source("examples")
+}
+
+tasks.register<JavaExec>("runExample") {
+    group = "application"
+    description = "Runs an example. Use -Pexample=<${exampleMainClasses.keys.joinToString("|")}>."
+    dependsOn(tasks.named(examplesSourceSet.classesTaskName))
+    classpath = examplesSourceSet.runtimeClasspath
+
+    doFirst {
+        val exampleName = providers.gradleProperty("example").orNull
+            ?: error("Missing -Pexample. Available examples: ${exampleMainClasses.keys.joinToString(", ")}")
+        val exampleMain = exampleMainClasses[exampleName]
+            ?: error("Unknown example '$exampleName'. Available examples: ${exampleMainClasses.keys.joinToString(", ")}")
+        mainClass.set(exampleMain)
     }
 }
 

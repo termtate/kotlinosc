@@ -77,6 +77,7 @@ On Windows:
 
 ```kotlin
 import io.github.termtate.kotlinosc.type.OscMessage
+import io.github.termtate.kotlinosc.type.invoke
 
 val msg = OscMessage("/synth/freq", 440, 0.8f, "lead")
 ```
@@ -93,6 +94,20 @@ val bundle = oscBundle(OscTimetag.IMMEDIATELY) {
         message("/b", true)
     }
 }
+```
+
+### Encode and decode an OSC packet
+
+```kotlin
+import io.github.termtate.kotlinosc.codec.decodeFromByteArray
+import io.github.termtate.kotlinosc.codec.encodeToByteArray
+import io.github.termtate.kotlinosc.type.OscMessage
+import io.github.termtate.kotlinosc.type.OscPacket
+import io.github.termtate.kotlinosc.type.invoke
+
+val message = OscMessage("/ping", "hello", 123)
+val bytes = message.encodeToByteArray()
+val decoded = OscPacket.decodeFromByteArray(bytes)
 ```
 
 ### Start a server with DSL
@@ -131,6 +146,7 @@ client.closeAndJoin()
 - Configuration: [docs/config.md](docs/config.md)
 - Address pattern syntax: [docs/address-pattern.md](docs/address-pattern.md)
 - Error handling: [docs/error-handling.md](docs/error-handling.md)
+- Runnable examples: [examples/README.md](examples/README.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
 
 ## Current Limitations And Planned Features
