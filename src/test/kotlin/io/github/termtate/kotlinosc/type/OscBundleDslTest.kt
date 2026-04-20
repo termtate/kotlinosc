@@ -8,6 +8,7 @@ import io.github.termtate.kotlinosc.arg.OscTimetag
 import io.github.termtate.kotlinosc.arg.toOscTimetag
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -87,6 +88,30 @@ class OscBundleDslTest {
 
         assertEquals(t, bundle.timeTag)
         assertTrue(bundle.elements.isEmpty())
+    }
+
+    @Test
+    fun `OscBundle toString should format nested bundles readably`() {
+        val bundle = oscBundle {
+            message("/a", 1, "x")
+            bundle {
+                message("/b", true)
+            }
+        }
+
+        val rendered = bundle.toString()
+
+        println(rendered)
+
+        assertEquals(
+            rendered,
+            "OscBundle(timeTag=IMMEDIATELY, elements=[\n" +
+            "  OscMessage(address=/a, args=[OscInt32(value=1), OscString(value=x)]),\n" +
+            "  OscBundle(timeTag=IMMEDIATELY, elements=[\n" +
+            "    OscMessage(address=/b, args=[OscTrue])\n" +
+            "  ])\n" +
+            "])"
+        )
     }
 }
 
