@@ -15,6 +15,7 @@
 - `OscMessage("/path", vararg OscArg)`
 - `OscMessage("/path", vararg Any?)`
 - `OscMessage("/path", List<Any?>)`
+- `OscMessage("/path", List<OscArg>)`
 
 `Any?` arguments are boxed into `OscArg` internally.
 
@@ -43,21 +44,6 @@ val packet = oscBundle {
 }
 ```
 
-## Kotlin Type Boxing (for `Any?` entrypoints)
+## Kotlin Type Boxing
 
-Common mappings:
-
-- `Int` -> `OscInt32`
-- `Long` -> `OscInt64`
-- `Float` -> `OscFloat32`
-- `Double` -> `OscFloat64`
-- `String` -> `OscString`
-- `Char` -> `OscChar`
-- `Boolean` -> `OscTrue` / `OscFalse`
-- `ByteArray` -> `OscBlob`
-- `null` -> `OscNil`
-- `MIDI` -> `OscMIDI`
-- `RGBA` -> `OscRGBA`
-- `Instant` -> `OscTimetag`
-- `List<*>` / `Array<*>` -> `OscArray` (recursive boxing)
-- `OscArg` -> unchanged
+see [type-support-matrix.md](type-support-matrix.md).

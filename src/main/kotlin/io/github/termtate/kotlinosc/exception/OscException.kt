@@ -32,3 +32,4 @@ public class OscDispatchException(
     cause: Throwable? = null
 ) : OscException(message, cause)
 
+internal class OscFrameException(message: String) : OscException(message)

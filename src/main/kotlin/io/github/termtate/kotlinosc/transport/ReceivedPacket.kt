@@ -6,6 +6,6 @@ import kotlin.time.Instant
 
 internal data class ReceivedPacket(
     val packet: OscPacket,
-    val remote: SocketAddress,
+    val peer: OscPeer,
     val receivedAt: Instant,
 )

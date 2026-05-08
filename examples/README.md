@@ -25,6 +25,8 @@ Available example ids:
 - `client-server-roundtrip`
 - `address-pattern-routing`
 - `scheduled-bundle-dispatch`
+- `tcp-client-send`
+- `tcp-server-route`
 
 ## Pick By Goal
 
@@ -35,3 +37,5 @@ Available example ids:
 - See a full in-process roundtrip: `client-server-roundtrip`
 - See address pattern routing in action: `address-pattern-routing`
 - See delayed bundle dispatch with OSC timetags: `scheduled-bundle-dispatch`
+- Send one TCP OSC message with default length-prefixed framing: `tcp-client-send`
+- Start a TCP server using SLIP framing and handle one route: `tcp-server-route`

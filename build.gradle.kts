@@ -20,6 +20,8 @@ val exampleMainClasses = mapOf(
     "client-server-roundtrip" to "examples.clientserverroundtrip.MainKt",
     "address-pattern-routing" to "examples.addresspatternrouting.MainKt",
     "scheduled-bundle-dispatch" to "examples.scheduledbundledispatch.MainKt",
+    "tcp-client-send" to "examples.tcpclientsend.MainKt",
+    "tcp-server-route" to "examples.tcpserverroute.MainKt",
 )
 
 val examplesSourceSet = sourceSets.create("examples") {

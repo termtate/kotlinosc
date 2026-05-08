@@ -115,6 +115,10 @@ internal class OscByteWriter {
         out.write(packet)
     }
 
+    fun writeByteArray(byteArray: ByteArray) {
+        out.write(byteArray)
+    }
+
     fun toByteArray(): ByteArray = out.toByteArray()
 }
 

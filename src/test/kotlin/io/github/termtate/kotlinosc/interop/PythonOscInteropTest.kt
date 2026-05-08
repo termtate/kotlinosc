@@ -30,7 +30,6 @@ class PythonOscInteropTest {
     @Test
     fun `kotlin osc client should send message to python osc server`() = runBlocking {
         assumeTrue(hasUv(), "uv is not installed; skipping python interop test")
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         val port = getAvailablePort()
         val outFile = Files.createTempFile("python-osc-server", ".json").toFile()
         val readyDir = Files.createTempDirectory("python-osc-ready")
@@ -51,7 +50,7 @@ class PythonOscInteropTest {
             )
             waitForFile(readyFile, 8_000)
 
-            val client = OscClient(InetSocketAddress("127.0.0.1", port), scope)
+            val client = OscClient(InetSocketAddress("127.0.0.1", port))
             client.send(OscMessage(address = "/interop/from_kotlin"))
             client.closeAndJoin()
 
@@ -63,7 +62,6 @@ class PythonOscInteropTest {
             assertTrue(json.contains("\"address\": \"/interop/from_kotlin\""), json)
             assertTrue(json.contains("\"args\": []"), json)
         } finally {
-            scope.cancel()
             outFile.delete()
             readyFile.delete()
             readyDir.toFile().delete()

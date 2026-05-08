@@ -6,6 +6,8 @@ import io.github.termtate.kotlinosc.route.DispatchMode
 import io.github.termtate.kotlinosc.route.OscDispatcher
 import io.github.termtate.kotlinosc.route.OscPacketScheduler
 import io.github.termtate.kotlinosc.route.OscRouter
+import io.github.termtate.kotlinosc.transport.tcp.TcpOscServerBackend
+import io.github.termtate.kotlinosc.transport.udp.UdpOscServerBackend
 import io.github.termtate.kotlinosc.util.OscLogger
 import io.github.termtate.kotlinosc.util.logger
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,12 +21,11 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import java.io.Closeable
-import java.net.DatagramSocket
 import java.net.SocketAddress
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * UDP OSC server runtime.
+ * OSC server runtime for receiving packets over UDP or TCP and dispatching them to an [OscRouter].
  *
  * Lifecycle model:
  * - [start] / [startAsync] are startup entry points (not concurrency-safe)
@@ -33,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference
  * - [close] triggers fire-and-forget shutdown via [stopAsync]
  *
  * This server is one-shot: calling [start] after a completed [stop] throws [OscLifecycleException].
+ * UDP is used by default. TCP mode accepts framed OSC packets from multiple clients.
  *
  * Example:
  * ```
@@ -60,7 +62,8 @@ public class OscServer internal constructor(
         dispatchDispatcher: CoroutineDispatcher = Dispatchers.IO,
         transportHook: OscTransportHook = OscTransportHook.NOOP,
         strictAddressPattern: Boolean = true,
-        strictCodecPayloadConsumption: Boolean = true
+        strictCodecPayloadConsumption: Boolean = true,
+        protocol: OscTransportProtocol = OscTransportProtocol.Udp
     ) : this(
         OscServerOptions(
             bindAddress = bindAddress,
@@ -72,7 +75,8 @@ public class OscServer internal constructor(
             dispatchDispatcher = dispatchDispatcher,
             transportHook = transportHook,
             codecConfig = OscConfig.Codec(strictCodecPayloadConsumption),
-            addressPatternConfig = OscConfig.AddressPattern(strictAddressPattern)
+            addressPatternConfig = OscConfig.AddressPattern(strictAddressPattern),
+            protocol = protocol
         )
     )
 
@@ -88,12 +92,21 @@ public class OscServer internal constructor(
         dispatchDispatcher = options.dispatchDispatcher
     )
 
-    private val transport = UdpOscTransport(
-        options.scope,
-        DatagramSocket(options.bindAddress),
-        hook = options.transportHook,
-        codecConfig = options.codecConfig
-    )
+    private val backend: OscServerBackend = when (options.protocol) {
+        OscTransportProtocol.Udp -> UdpOscServerBackend(
+            scope = options.scope,
+            bindAddress = options.bindAddress,
+            transportHook = options.transportHook,
+            codecConfig = options.codecConfig
+        )
+        is OscTransportProtocol.Tcp -> TcpOscServerBackend(
+            scope = options.scope,
+            bindAddress = options.bindAddress,
+            transportHook = options.transportHook,
+            codecConfig = options.codecConfig,
+            framingStrategy = options.protocol.framingStrategy
+        )
+    }
 
     private var collectorJob: Job? = null
     private val lifecycleScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -112,19 +125,19 @@ public class OscServer internal constructor(
      */
     public suspend fun start() {
         if (collectorJob?.isActive == true) return
-        if (transport.isClosed()) {
+        if (closeTaskRef.get() != null) {
             throw OscLifecycleException("OscServer.start() cannot be called after stop()")
         }
 
         try {
             collectorJob = options.scope.launch {
-                transport.receivedPackets.collect { receivedPacket ->
+                backend.receivedPackets.collect { receivedPacket ->
                     logger.debug { "received packet $receivedPacket" }
                     scheduler.schedule(receivedPacket.packet, options.dispatchMode)
                 }
             }
             scheduler.start()
-            transport.start()
+            backend.start()
         } catch (t: Throwable) {
             collectorJob?.cancelAndJoin()
             collectorJob = null
@@ -146,7 +159,7 @@ public class OscServer internal constructor(
     private suspend fun stopUnsafe() {
         collectorJob?.cancelAndJoin()
         collectorJob = null
-        transport.stop()
+        backend.stop()
         scheduler.stop()
         logger.info { "osc server stopped" }
     }

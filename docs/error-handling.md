@@ -45,12 +45,14 @@ Typical failures:
 
 Potential sources:
 
-- UDP send/receive loop
+- UDP or TCP send/receive loop
+- TCP framing
 - socket close during active IO
 
 Typical failures:
 
 - socket/network IO errors
+- malformed TCP frames
 - close/race conditions during shutdown
 
 ### Routing and Dispatch

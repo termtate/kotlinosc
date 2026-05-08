@@ -12,7 +12,7 @@ public interface OscTransportHook {
     /**
      * Called when payload decoding fails.
      *
-     * @param payload raw UDP payload bytes
+     * @param payload raw OSC packet payload bytes
      * @param error decode failure
      */
     public fun onDecodeError(payload: ByteArray, error: OscCodecException): Unit = Unit

@@ -12,7 +12,7 @@ import java.net.SocketAddress
 /**
  * Configuration for [OscServer] runtime.
  *
- * @property bindAddress UDP socket address to bind.
+ * @property bindAddress Socket address to bind.
  * @property router Route registry used for dispatch.
  * @property dispatchMode Route dispatch strategy when multiple routes match.
  * @property scope Parent coroutine scope used by server runtime jobs.
@@ -22,6 +22,7 @@ import java.net.SocketAddress
  * @property transportHook Transport-layer error callback hooks.
  * @property codecConfig Codec behavior options.
  * @property addressPatternConfig Address pattern matching behavior options.
+ * @property protocol Transport protocol used by the server.
  */
 internal data class OscServerOptions(
     val bindAddress: SocketAddress,
@@ -34,4 +35,5 @@ internal data class OscServerOptions(
     val transportHook: OscTransportHook = OscTransportHook.NOOP,
     val codecConfig: OscConfig.Codec = OscConfig.Codec.default,
     val addressPatternConfig: OscConfig.AddressPattern = OscConfig.AddressPattern.default,
+    val protocol: OscTransportProtocol = OscTransportProtocol.Udp
 )

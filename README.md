@@ -1,15 +1,17 @@
 # kotlinosc
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.termtate.kotlinosc/kotlinosc?style=flat-square)](https://central.sonatype.com/artifact/io.github.termtate.kotlinosc/kotlinosc)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.termtate.kotlinosc/kotlinosc)](https://central.sonatype.com/artifact/io.github.termtate.kotlinosc/kotlinosc)
 [![CI](https://github.com/termtate/kotlinosc/actions/workflows/ci.yml/badge.svg)](https://github.com/termtate/kotlinosc/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/termtate/kotlinosc?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/github/license/termtate/kotlinosc)](LICENSE)
 
 `kotlinosc` is a Kotlin/JVM OSC (Open Sound Control) library focused on:
 
 - OSC packet codec (`OscMessage`, `OscBundle`)
 - OSC address pattern matching and routing
-- UDP server/client runtime
+- UDP and TCP server/client runtime
 - Kotlin-friendly DSL for server/client and bundle construction
+
+This library currently implements OSC 1.0-compatible packet/data behavior.
 
 ## Features
 
@@ -142,21 +144,79 @@ client.send(OscMessage("/ping"))
 client.closeAndJoin()
 ```
 
+UDP is the default transport for both `oscServer` and `oscClient`.
+
+### Use TCP transport
+
+TCP transport sends OSC packets over a persistent connection. Because TCP is a byte stream,
+client and server must use the same framing strategy. The default TCP framing strategy is
+`LENGTH_PREFIXED`.
+
+```kotlin
+import io.github.termtate.kotlinosc.transport.dsl.oscClient
+import io.github.termtate.kotlinosc.transport.dsl.oscServer
+import io.github.termtate.kotlinosc.type.OscMessage
+import kotlinx.coroutines.runBlocking
+
+runBlocking {
+    val server = oscServer("127.0.0.1", 9000) {
+        protocol { tcp() }
+        route {
+            on("/ping") { message ->
+                println("received over TCP: ${message.address}")
+            }
+        }
+    }
+
+    val client = oscClient("127.0.0.1", 9000) {
+        protocol { tcp() }
+    }
+
+    try {
+        server.start()
+        client.send(OscMessage("/ping"))
+    } finally {
+        client.closeAndJoin()
+        server.stop()
+    }
+}
+```
+
+### Use TCP SLIP framing
+
+```kotlin
+import io.github.termtate.kotlinosc.transport.dsl.oscClient
+import io.github.termtate.kotlinosc.transport.dsl.oscServer
+import io.github.termtate.kotlinosc.transport.tcp.codec.OscTcpFramingStrategy
+
+val server = oscServer("127.0.0.1", 9000) {
+    protocol {
+        tcp {
+            framingStrategy = OscTcpFramingStrategy.SLIP
+        }
+    }
+}
+
+val client = oscClient("127.0.0.1", 9000) {
+    protocol {
+        tcp {
+            framingStrategy = OscTcpFramingStrategy.SLIP
+        }
+    }
+}
+```
+
 ## Documentation
 
 - Threading and lifecycle: [docs/threading-and-lifecycle.md](docs/threading-and-lifecycle.md)
 - Data model and DSL: [docs/data-model.md](docs/data-model.md)
+- Transport: [docs/transport.md](docs/transport.md)
 - Configuration: [docs/config.md](docs/config.md)
 - Address pattern syntax: [docs/address-pattern.md](docs/address-pattern.md)
+- Type support matrix: [docs/type-support-matrix.md](docs/type-support-matrix.md)
 - Error handling: [docs/error-handling.md](docs/error-handling.md)
 - Runnable examples: [examples/README.md](examples/README.md)
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
-
-## Current Limitations And Planned Features
-
-Not supported yet (planned for future releases):
-
-- TCP server/client transport support.
 
 ## Publishing Setup
 

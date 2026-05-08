@@ -36,14 +36,16 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 /**
- * Schedule and dispatch osc packets by packet type:
+ * Schedules and dispatches OSC packets by packet type:
  * - OscMessage: dispatch immediately
- * - OscBundle: bundle会被展开为OscMessage(s)并分发。分发时间规�? `effectiveTime = maxOf(parentBundleTimetag, childTimetag)`
+ * - OscBundle: flatten into OscMessage items and dispatch them at
+ *   `effectiveTime = maxOf(parentBundleTimetag, childTimetag)`
  *
  * This scheduler is one-shot: after stop() closes the loop, it cannot be started again.
  *
- * @param maxConcurrentDispatches [dispatch] 允许的并发数�? * [maxConcurrentDispatches]=1代表[dispatch]按照包的schedule和时间顺序严格串行执行；
- * [maxConcurrentDispatches]>1代表[dispatch]将会不保证顺序并发执�? *
+ * @param maxConcurrentDispatches Maximum number of concurrent [dispatch] calls.
+ * [maxConcurrentDispatches] = 1 dispatches strictly in scheduled time order.
+ * [maxConcurrentDispatches] > 1 allows concurrent dispatch without ordering guarantees.
  */
 @OptIn(DelicateCoroutinesApi::class)
 internal class OscPacketScheduler private constructor(
@@ -115,10 +117,11 @@ internal class OscPacketScheduler private constructor(
     }
 
     /**
-     * 立即分发或在之后分发[packet]
+     * Dispatches [packet] immediately or schedules it for later.
      *
-     * - if [packet] is [OscMessage] -> 立即分发
-     * - if [packet] is [OscBundle] -> bundle会被展开为OscMessage(s)并分发。分发时间规�? `effectiveTime = maxOf(parentBundleTimetag, childTimetag)`
+     * - if [packet] is [OscMessage] -> dispatch immediately
+     * - if [packet] is [OscBundle] -> flatten into OscMessage items and dispatch them at
+     *   `effectiveTime = maxOf(parentBundleTimetag, childTimetag)`
      *
      * @return task id of scheduled packet
      */
@@ -132,9 +135,11 @@ internal class OscPacketScheduler private constructor(
     }
 
     /**
-     * 取消对应[id]的schedule任务
+     * Cancels the scheduled task for [id].
      *
-     * 注意，[OscMessage]�?timetag=[OscTimetag.IMMEDIATELY] �?[OscBundle] 会被立即分发，因此无法取�?     */
+     * Note that [OscMessage] and [OscBundle] items with timetag [OscTimetag.IMMEDIATELY]
+     * are dispatched immediately and therefore cannot be cancelled.
+     */
     suspend fun cancel(id: Long): Boolean {
         val req = CompletableDeferred<Boolean>()
         commands.send(Command.CancelReq(id, req))

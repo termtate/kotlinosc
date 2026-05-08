@@ -334,8 +334,8 @@ public final class io/github/termtate/kotlinosc/route/OscRouter : io/github/term
 }
 
 public final class io/github/termtate/kotlinosc/transport/OscClient : java/io/Closeable {
-	public fun <init> (Ljava/net/SocketAddress;Lkotlinx/coroutines/CoroutineScope;Lio/github/termtate/kotlinosc/transport/OscTransportHook;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;)V
-	public synthetic fun <init> (Ljava/net/SocketAddress;Lkotlinx/coroutines/CoroutineScope;Lio/github/termtate/kotlinosc/transport/OscTransportHook;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/net/SocketAddress;Lio/github/termtate/kotlinosc/transport/OscTransportHook;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;Lio/github/termtate/kotlinosc/transport/OscTransportProtocol;)V
+	public synthetic fun <init> (Ljava/net/SocketAddress;Lio/github/termtate/kotlinosc/transport/OscTransportHook;Lio/github/termtate/kotlinosc/config/OscConfig$Codec;Lio/github/termtate/kotlinosc/transport/OscTransportProtocol;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun close ()V
 	public final fun closeAndJoin (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun closeAsync ()Lkotlinx/coroutines/Deferred;
@@ -368,6 +368,29 @@ public final class io/github/termtate/kotlinosc/transport/OscTransportHook$Defau
 	public static fun onTransportError (Lio/github/termtate/kotlinosc/transport/OscTransportHook;Ljava/lang/Throwable;)V
 }
 
+public abstract interface class io/github/termtate/kotlinosc/transport/OscTransportProtocol {
+}
+
+public final class io/github/termtate/kotlinosc/transport/OscTransportProtocol$Tcp : io/github/termtate/kotlinosc/transport/OscTransportProtocol {
+	public fun <init> ()V
+	public fun <init> (Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;)V
+	public synthetic fun <init> (Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
+	public final fun copy (Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;)Lio/github/termtate/kotlinosc/transport/OscTransportProtocol$Tcp;
+	public static synthetic fun copy$default (Lio/github/termtate/kotlinosc/transport/OscTransportProtocol$Tcp;Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;ILjava/lang/Object;)Lio/github/termtate/kotlinosc/transport/OscTransportProtocol$Tcp;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFramingStrategy ()Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/github/termtate/kotlinosc/transport/OscTransportProtocol$Udp : io/github/termtate/kotlinosc/transport/OscTransportProtocol {
+	public static final field INSTANCE Lio/github/termtate/kotlinosc/transport/OscTransportProtocol$Udp;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/github/termtate/kotlinosc/transport/dsl/OscAddressPatternDsl {
 	public fun <init> ()V
 	public final fun getStrictAddressPattern ()Z
@@ -384,9 +407,8 @@ public final class io/github/termtate/kotlinosc/transport/dsl/OscClientDslKt {
 public final class io/github/termtate/kotlinosc/transport/dsl/OscClientOptionsBuilder {
 	public fun <init> ()V
 	public final fun codec (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscCodecDsl;
-	public final fun getScope ()Lkotlinx/coroutines/CoroutineScope;
 	public final fun getTransportHook ()Lio/github/termtate/kotlinosc/transport/OscTransportHook;
-	public final fun setScope (Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun protocol (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscProtocolDsl;
 	public final fun setTransportHook (Lio/github/termtate/kotlinosc/transport/OscTransportHook;)V
 }
 
@@ -394,6 +416,19 @@ public final class io/github/termtate/kotlinosc/transport/dsl/OscCodecDsl {
 	public fun <init> ()V
 	public final fun getStrictCodecPayloadConsumption ()Z
 	public final fun setStrictCodecPayloadConsumption (Z)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscProtocolDsl {
+	public fun <init> ()V
+	public final fun tcp (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun tcp$default (Lio/github/termtate/kotlinosc/transport/dsl/OscProtocolDsl;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public final fun udp ()V
+}
+
+public final class io/github/termtate/kotlinosc/transport/dsl/OscProtocolDsl$OscTcpDsl {
+	public fun <init> ()V
+	public final fun getFramingStrategy ()Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
+	public final fun setFramingStrategy (Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;)V
 }
 
 public final class io/github/termtate/kotlinosc/transport/dsl/OscServerDslKt {
@@ -411,6 +446,7 @@ public final class io/github/termtate/kotlinosc/transport/dsl/OscServerOptionsBu
 	public final fun getRouter ()Lio/github/termtate/kotlinosc/route/OscRouter;
 	public final fun getScope ()Lkotlinx/coroutines/CoroutineScope;
 	public final fun getTransportHook ()Lio/github/termtate/kotlinosc/transport/OscTransportHook;
+	public final fun protocol (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/transport/dsl/OscProtocolDsl;
 	public final fun route (Lkotlin/jvm/functions/Function1;)Lio/github/termtate/kotlinosc/route/OscRouter;
 	public final fun setRouter (Lio/github/termtate/kotlinosc/route/OscRouter;)V
 	public final fun setScope (Lkotlinx/coroutines/CoroutineScope;)V
@@ -427,6 +463,14 @@ public final class io/github/termtate/kotlinosc/transport/dsl/OscServerOptionsBu
 	public final fun setDispatchDispatcher (Lkotlinx/coroutines/CoroutineDispatcher;)V
 	public final fun setDispatchMode (Lio/github/termtate/kotlinosc/route/DispatchMode;)V
 	public final fun setMaxConcurrentDispatches (I)V
+}
+
+public final class io/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy : java/lang/Enum {
+	public static final field LENGTH_PREFIXED Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
+	public static final field SLIP Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
+	public static fun values ()[Lio/github/termtate/kotlinosc/transport/tcp/codec/OscTcpFramingStrategy;
 }
 
 public final class io/github/termtate/kotlinosc/type/DslKt {

@@ -1,5 +1,10 @@
-package io.github.termtate.kotlinosc.transport
+package io.github.termtate.kotlinosc.transport.udp
 
+import io.github.termtate.kotlinosc.codec.encodeToByteArray
+import io.github.termtate.kotlinosc.exception.OscCodecException
+import io.github.termtate.kotlinosc.type.OscMessage
+import io.github.termtate.kotlinosc.io.OscByteWriter
+import io.github.termtate.kotlinosc.transport.OscTransportHook
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -8,40 +13,34 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import io.github.termtate.kotlinosc.type.OscMessage
-import io.github.termtate.kotlinosc.codec.encodeToByteArray
-import io.github.termtate.kotlinosc.exception.OscCodecException
-import io.github.termtate.kotlinosc.exception.OscTransportException
-import io.github.termtate.kotlinosc.io.OscByteWriter
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
-class UdpOscTransportTest {
+class UdpOscServerBackendTest {
     private fun getAvailablePort() = DatagramSocket(0).use { it.localPort }
 
     @Test
     fun `stop should exit receive loop without cancelling parent scope`() = runBlocking {
         val parentJob = Job()
         val scope = CoroutineScope(parentJob + Dispatchers.Default)
-        val transport = UdpOscTransport(
+        val backend = UdpOscServerBackend(
             scope = scope,
-            socket = DatagramSocket(InetSocketAddress("127.0.0.1", getAvailablePort()))
+            bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
         )
 
         try {
-            transport.start()
+            backend.start()
             withTimeout(2_000) {
-                transport.stop()
+                backend.stop()
             }
             assertTrue(parentJob.isActive)
         } finally {
-            transport.stop()
+            backend.stop()
             scope.cancel()
         }
     }
@@ -50,15 +49,15 @@ class UdpOscTransportTest {
     fun `channel overflow should keep latest packet when capacity is one`() = runBlocking {
         val scope = CoroutineScope(Job() + Dispatchers.Default)
         val target = InetSocketAddress("127.0.0.1", getAvailablePort())
-        val transport = UdpOscTransport(
+        val backend = UdpOscServerBackend(
             scope = scope,
-            socket = DatagramSocket(target),
+            bindAddress = target,
             receiveChannelCapacity = 1
         )
         val client = DatagramSocket()
 
         try {
-            transport.start()
+            backend.start()
 
             repeat(20) { i ->
                 val payload = OscMessage("/m$i").encodeToByteArray()
@@ -68,12 +67,12 @@ class UdpOscTransportTest {
             // Let receive loop drain socket and apply overflow policy.
             delay(120)
 
-            val first = withTimeout(2_000) { transport.receivedPackets.first() }
+            val first = withTimeout(2_000) { backend.receivedPackets.first() }
             assertIs<OscMessage>(first.packet)
             assertEquals("/m19", first.packet.address)
         } finally {
             client.close()
-            transport.stop()
+            backend.stop()
             scope.cancel()
         }
     }
@@ -83,10 +82,10 @@ class UdpOscTransportTest {
         val scope = CoroutineScope(Job() + Dispatchers.Default)
         val target = InetSocketAddress("127.0.0.1", getAvailablePort())
         var decodeErrorCount = 0
-        val transport = UdpOscTransport(
+        val backend = UdpOscServerBackend(
             scope = scope,
-            socket = DatagramSocket(target),
-            hook = object : OscTransportHook {
+            bindAddress = target,
+            transportHook = object : OscTransportHook {
                 override fun onDecodeError(payload: ByteArray, error: OscCodecException) {
                     decodeErrorCount++
                 }
@@ -95,7 +94,7 @@ class UdpOscTransportTest {
         val client = DatagramSocket()
 
         try {
-            transport.start()
+            backend.start()
             // Bad packet: typetag string does not start with ','.
             val writer = OscByteWriter()
             writer.writeString("/bad")
@@ -112,34 +111,8 @@ class UdpOscTransportTest {
             assertEquals(1, decodeErrorCount)
         } finally {
             client.close()
-            transport.stop()
-            scope.cancel()
-        }
-    }
-
-    @Test
-    fun `transport error hook should be called when send fails`() = runBlocking {
-        val scope = CoroutineScope(Job() + Dispatchers.Default)
-        var transportErrorCount = 0
-        val transport = UdpOscTransport(
-            scope = scope,
-            socket = DatagramSocket(),
-            hook = object : OscTransportHook {
-                override fun onTransportError(error: Throwable) {
-                    transportErrorCount++
-                }
-            }
-        )
-        transport.stop()
-
-        try {
-            assertFailsWith<OscTransportException> {
-                transport.send(OscMessage("/x"), InetSocketAddress("127.0.0.1", getAvailablePort()))
-            }
-            assertEquals(1, transportErrorCount)
-        } finally {
+            backend.stop()
             scope.cancel()
         }
     }
 }
-

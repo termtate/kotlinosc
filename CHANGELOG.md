@@ -8,7 +8,32 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 ### Added
 
-- No unreleased changes.
+- Added TCP client/server transport support through `OscTransportProtocol.Tcp`.
+- Added TCP packet framing strategies: `OscTcpFramingStrategy.LENGTH_PREFIXED` and `OscTcpFramingStrategy.SLIP`.
+- Added client/server DSL transport selection:
+  - `protocol { udp() }`
+  - `protocol { tcp() }`
+  - `protocol { tcp { framingStrategy = OscTcpFramingStrategy.SLIP } }`
+- Added TCP backend tests and public API round-trip coverage for default length-prefixed framing and SLIP framing.
+
+### Changed
+
+- `OscClient` no longer accepts an external coroutine scope. Client shutdown is managed internally through `closeAsync()`, `closeAndJoin()`, and `close()`.
+- `OscServer` can now be configured with UDP or TCP transport while keeping UDP as the default.
+
+### Removed
+
+- Removed `scope` from `OscClient` and `OscClientOptionsBuilder`.
+
+### Migration
+
+```kotlin
+// Before
+val client = OscClient(address, scope)
+
+// After
+val client = OscClient(address)
+```
 
 ## [0.2.0] - 2026-04-21
 ### Added

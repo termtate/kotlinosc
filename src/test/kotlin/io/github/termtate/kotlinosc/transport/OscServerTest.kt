@@ -15,9 +15,11 @@ import io.github.termtate.kotlinosc.exception.OscLifecycleException
 import io.github.termtate.kotlinosc.io.OscByteWriter
 import io.github.termtate.kotlinosc.route.DispatchMode
 import io.github.termtate.kotlinosc.route.OscRouter
+import io.github.termtate.kotlinosc.transport.tcp.codec.OscTcpFramingStrategy
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
+import java.net.ServerSocket
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -27,8 +29,10 @@ class OscServerTest {
 
     private fun getAvailablePort() = DatagramSocket(0).use { it.localPort }
 
+    private fun getAvailableTcpPort() = ServerSocket(0).use { it.localPort }
+
     @Test
-    fun `server should receive udp packet and dispatch to router`() = runBlocking {
+    fun `default udp server and client should dispatch one packet to router`() = runBlocking {
         val bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         val router = OscRouter()
@@ -44,7 +48,7 @@ class OscServerTest {
             received.complete(message)
         }
 
-        val client = OscClient(bindAddress, scope)
+        val client = OscClient(bindAddress)
         try {
             server.start()
 
@@ -52,6 +56,73 @@ class OscServerTest {
 
             val message = withTimeout(2_000) { received.await() }
             assertEquals("/ping", message.address)
+        } finally {
+            client.closeAndJoin()
+            server.stop()
+            scope.cancel()
+        }
+    }
+
+    @Test
+    fun `tcp server and client should dispatch one packet with default framing`() = runBlocking {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val address = InetSocketAddress("127.0.0.1", getAvailableTcpPort())
+        val received = CompletableDeferred<OscMessage>()
+        val router = OscRouter().apply {
+            on("/tcp/default") { message -> received.complete(message) }
+        }
+        val server = OscServer(
+            bindAddress = address,
+            router = router,
+            dispatchMode = DispatchMode.ALL_MATCH,
+            scope = scope,
+            protocol = OscTransportProtocol.Tcp()
+        )
+        val client = OscClient(
+            targetAddress = address,
+            protocol = OscTransportProtocol.Tcp()
+        )
+
+        try {
+            server.start()
+            client.send(OscMessage("/tcp/default"))
+
+            val message = withTimeout(2_000) { received.await() }
+            assertEquals("/tcp/default", message.address)
+        } finally {
+            client.closeAndJoin()
+            server.stop()
+            scope.cancel()
+        }
+    }
+
+    @Test
+    fun `tcp server and client should dispatch one packet with slip framing`() = runBlocking {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        val address = InetSocketAddress("127.0.0.1", getAvailableTcpPort())
+        val protocol = OscTransportProtocol.Tcp(OscTcpFramingStrategy.SLIP)
+        val received = CompletableDeferred<OscMessage>()
+        val router = OscRouter().apply {
+            on("/tcp/slip") { message -> received.complete(message) }
+        }
+        val server = OscServer(
+            bindAddress = address,
+            router = router,
+            dispatchMode = DispatchMode.ALL_MATCH,
+            scope = scope,
+            protocol = protocol
+        )
+        val client = OscClient(
+            targetAddress = address,
+            protocol = protocol
+        )
+
+        try {
+            server.start()
+            client.send(OscMessage("/tcp/slip"))
+
+            val message = withTimeout(2_000) { received.await() }
+            assertEquals("/tcp/slip", message.address)
         } finally {
             client.closeAndJoin()
             server.stop()
@@ -82,7 +153,7 @@ class OscServerTest {
     }
 
     @Test
-    fun `osc server should receive and dispatch multiple packets successfully`() = runBlocking {
+    fun `default udp server and client should dispatch multiple packets successfully`() = runBlocking {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         val address = InetSocketAddress("127.0.0.1", getAvailablePort())
         var countA = 0
@@ -110,8 +181,7 @@ class OscServerTest {
             scope = scope
         )
         val client = OscClient(
-            targetAddress = address,
-            scope = scope
+            targetAddress = address
         )
 
         try {
@@ -146,7 +216,7 @@ class OscServerTest {
             dispatchMode = DispatchMode.ALL_MATCH,
             scope = scope
         )
-        val client = OscClient(bindAddress, scope)
+        val client = OscClient(bindAddress)
 
         router.on("/ping") { message ->
             if (!received.isCompleted) {
@@ -169,7 +239,7 @@ class OscServerTest {
     }
 
     @Test
-    fun `server receive loop should not be corrupted after received invalid packet`() = runBlocking {
+    fun `default udp server receive loop should continue after invalid packet`() = runBlocking {
         val bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
         val router = OscRouter()
@@ -220,7 +290,7 @@ class OscServerTest {
     }
 
     @Test
-    fun `server stop should not fail when buffered packets still pending`() = runBlocking {
+    fun `default udp server stop should not fail when buffered packets still pending`() = runBlocking {
         val parentJob = Job()
         val scope = CoroutineScope(parentJob + Dispatchers.Default)
         val address = InetSocketAddress("127.0.0.1", getAvailablePort())
@@ -235,7 +305,7 @@ class OscServerTest {
             dispatchMode = DispatchMode.ALL_MATCH,
             scope = scope
         )
-        val client = OscClient(address, scope)
+        val client = OscClient(address)
 
         try {
             server.start()
