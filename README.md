@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.termtate.kotlinosc:kotlinosc:0.2.0")
+    implementation("io.github.termtate.kotlinosc:kotlinosc:0.3.0")
 }
 ```
 
@@ -48,7 +48,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.termtate.kotlinosc:kotlinosc:0.2.0'
+    implementation 'io.github.termtate.kotlinosc:kotlinosc:0.3.0'
 }
 ```
 
@@ -58,7 +58,7 @@ dependencies {
 <dependency>
   <groupId>io.github.termtate.kotlinosc</groupId>
   <artifactId>kotlinosc</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
