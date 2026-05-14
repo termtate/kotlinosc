@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project follows Semantic Versioning once stable releases start.
 
+## [Unreleased]
+
+### Added
+
+- Added `oscMessageOf(address, vararg args)` for building `OscMessage` values from regular Kotlin values.
+- Added `oscBundleOf(timetag) { ... }` as the bundle DSL entry point.
+- Added `OscBundleBuilder.packet(packet)` for adding prebuilt messages or nested bundles to a bundle DSL block.
+
+### Changed
+
+- `OscBundleBuilder.message` now has a single `message(address, vararg args: Any?)` form and uses the same boxing rules as `oscMessageOf`.
+- `List` and `Array` values passed to `oscMessageOf` or bundle `message` are treated as one OSC array argument. Spread a collection explicitly when passing it as multiple message arguments.
+
+### Removed
+
+- Removed the `OscMessage` companion `invoke` helpers for user-value construction.
+- Removed the old `oscBundle` bundle DSL entry point.
+- Removed the `OscBundleBuilder.message` overloads that accepted `List<OscArg>`, `List<Any?>`, or `vararg OscArg`.
+
+### Migration
+
+```kotlin
+// Before
+val message = OscMessage("/path", 1, "x")
+val bundle = oscBundle {
+    message("/a", listOf(1, 2))
+}
+
+// After
+val message = oscMessageOf("/path", 1, "x")
+val bundle = oscBundleOf {
+    message("/a", listOf(1, 2)) // one OscArray argument
+}
+
+// To pass a collection as multiple message arguments:
+val args = listOf(1, 2)
+val expanded = oscMessageOf("/a", *args.toTypedArray())
+```
+
 ## [0.3.0] - 2026-05-08
 
 ### Added

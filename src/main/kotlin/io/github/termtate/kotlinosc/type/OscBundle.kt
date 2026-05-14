@@ -19,30 +19,49 @@ public data class OscBundle(
     override fun toString(): String = buildString {
         appendBundle(this@OscBundle, indentLevel = 0)
     }
+
+    private fun StringBuilder.appendBundle(bundle: OscBundle, indentLevel: Int) {
+        val indent = "  ".repeat(indentLevel)
+        append(indent)
+        append("OscBundle(timeTag=")
+        append(if (bundle.isImmediately()) "IMMEDIATELY" else bundle.timeTag)
+
+        if (bundle.elements.isEmpty()) {
+            append(", elements=[])")
+            return
+        }
+
+        append(", elements=[\n")
+        bundle.elements.forEachIndexed { index, element ->
+            when (element) {
+                is OscMessage -> append("  ".repeat(indentLevel + 1)).append(element)
+                is OscBundle -> appendBundle(element, indentLevel + 1)
+            }
+            if (index != bundle.elements.lastIndex) {
+                append(",")
+            }
+            append("\n")
+        }
+        append(indent)
+        append("])")
+    }
 }
 
-private fun StringBuilder.appendBundle(bundle: OscBundle, indentLevel: Int) {
-    val indent = "  ".repeat(indentLevel)
-    append(indent)
-    append("OscBundle(timeTag=")
-    append(if (bundle.isImmediately()) "IMMEDIATELY" else bundle.timeTag)
 
-    if (bundle.elements.isEmpty()) {
-        append(", elements=[])")
-        return
-    }
-
-    append(", elements=[\n")
-    bundle.elements.forEachIndexed { index, element ->
-        when (element) {
-            is OscMessage -> append("  ".repeat(indentLevel + 1)).append(element)
-            is OscBundle -> appendBundle(element, indentLevel + 1)
-        }
-        if (index != bundle.elements.lastIndex) {
-            append(",")
-        }
-        append("\n")
-    }
-    append(indent)
-    append("])")
-}
+/**
+ * Builds an [OscBundle] with DSL.
+ *
+ * Example:
+ * ```kotlin
+ * val packet = oscBundleOf {
+ *     message("/a", 1, "x")
+ *     bundle {
+ *         message("/b", true)
+ *     }
+ * }
+ * ```
+ */
+public fun oscBundleOf(
+    timetag: OscTimetag = OscTimetag.IMMEDIATELY,
+    builder: OscBundleBuilder.() -> Unit
+): OscBundle = OscBundleBuilder(timetag).apply(builder).build()

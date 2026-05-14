@@ -1,8 +1,7 @@
 package examples.tcpclientsend
 
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
-import io.github.termtate.kotlinosc.type.OscMessage
-import io.github.termtate.kotlinosc.type.invoke
+import io.github.termtate.kotlinosc.type.oscMessageOf
 import kotlinx.coroutines.runBlocking
 
 fun main(): Unit = runBlocking {
@@ -11,7 +10,7 @@ fun main(): Unit = runBlocking {
     }
 
     try {
-        val message = OscMessage.invoke("/demo/tcp/ping", "hello from kotlinosc over TCP")
+        val message = oscMessageOf("/demo/tcp/ping", "hello from kotlinosc over TCP")
         client.send(message)
         println("Sent TCP message to 127.0.0.1:9000 -> $message")
     } finally {

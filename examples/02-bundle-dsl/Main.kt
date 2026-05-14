@@ -1,10 +1,10 @@
 package examples.bundledsl
 
 import io.github.termtate.kotlinosc.arg.OscTimetag
-import io.github.termtate.kotlinosc.type.oscBundle
+import io.github.termtate.kotlinosc.type.oscBundleOf
 
 fun main() {
-    val bundle = oscBundle(OscTimetag.IMMEDIATELY) {
+    val bundle = oscBundleOf(OscTimetag.IMMEDIATELY) {
         message("/session/start", "demo")
         message("/synth/freq", 440, 0.8f)
         bundle {

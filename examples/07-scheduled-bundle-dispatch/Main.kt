@@ -3,14 +3,13 @@ package examples.scheduledbundledispatch
 import io.github.termtate.kotlinosc.arg.toOscTimetag
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
 import io.github.termtate.kotlinosc.transport.dsl.oscServer
-import io.github.termtate.kotlinosc.type.oscBundle
+import io.github.termtate.kotlinosc.type.oscBundleOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import java.net.DatagramSocket
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 fun main(): Unit = runBlocking {
     val port = findFreeUdpPort()
@@ -31,7 +30,7 @@ fun main(): Unit = runBlocking {
         server.start()
 
         val dueAt = Clock.System.now() + 1500.milliseconds
-        val bundle = oscBundle(dueAt.toOscTimetag()) {
+        val bundle = oscBundleOf(dueAt.toOscTimetag()) {
             message("/scheduled/demo", "hello at a later timetag")
         }
 

@@ -3,7 +3,7 @@ package examples.clientserverroundtrip
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
 import io.github.termtate.kotlinosc.transport.dsl.oscServer
 import io.github.termtate.kotlinosc.type.OscMessage
-import io.github.termtate.kotlinosc.type.invoke
+import io.github.termtate.kotlinosc.type.oscMessageOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -27,7 +27,7 @@ fun main(): Unit = runBlocking {
     try {
         server.start()
 
-        val outbound = OscMessage.invoke("/roundtrip", 42, "hello")
+        val outbound = oscMessageOf("/roundtrip", 42, "hello")
         client.send(outbound)
 
         withTimeout(3_000) {

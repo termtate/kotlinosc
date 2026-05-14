@@ -8,41 +8,59 @@
 
 ## Message Construction
 
-### Companion invoke helpers
+### User-value helper
 
-`OscMessage` provides companion `invoke` overloads:
+Use `oscMessageOf` when building messages from regular Kotlin values:
 
-- `OscMessage("/path", vararg OscArg)`
-- `OscMessage("/path", vararg Any?)`
-- `OscMessage("/path", List<Any?>)`
-- `OscMessage("/path", List<OscArg>)`
+```kotlin
+val message = oscMessageOf("/path", 1, "x", true)
+```
 
-`Any?` arguments are boxed into `OscArg` internally.
+Each argument is boxed into `OscArg` internally. `OscArg` values are used unchanged.
+
+`List<*>` and `Array<*>` values are boxed as a single `OscArray` argument. To pass
+an existing collection as multiple message arguments, spread it explicitly:
+
+```kotlin
+val args = listOf(1, "x")
+val message = oscMessageOf("/path", *args.toTypedArray())
+```
+
+### Pre-boxed arguments
+
+Use the `OscMessage` constructor directly when you already have boxed OSC arguments:
+
+```kotlin
+val message = OscMessage("/path", listOf(OscInt32(1), OscString("x")))
+```
 
 ## Bundle DSL
 
 Entry:
 
-- `oscBundle(timetag = OscTimetag.IMMEDIATELY) { ... }`
+- `oscBundleOf(timetag = OscTimetag.IMMEDIATELY) { ... }`
 
 Builder:
 
-- `message(address, vararg OscArg)`
-- `message(address, List<OscArg>)`
 - `message(address, vararg Any?)`
-- `message(address, List<Any?>)`
 - `bundle(timetag = OscTimetag.IMMEDIATELY) { ... }`
+- `packet(packet: OscPacket)`
 
 Example:
 
 ```kotlin
-val packet = oscBundle {
+val packet = oscBundleOf {
     message("/a", 1, "x")
     bundle {
         message("/b", true)
     }
+    packet(oscMessageOf("/c"))
 }
 ```
+
+`message` uses the same boxing rules as `oscMessageOf`; list and array arguments
+become a single `OscArray` argument. Use `packet` to add a prebuilt `OscMessage`
+or `OscBundle` directly.
 
 ## Kotlin Type Boxing
 

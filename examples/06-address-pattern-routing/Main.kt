@@ -2,7 +2,7 @@ package examples.addresspatternrouting
 
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
 import io.github.termtate.kotlinosc.transport.dsl.oscServer
-import io.github.termtate.kotlinosc.type.OscMessage
+import io.github.termtate.kotlinosc.type.oscMessageOf
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -34,9 +34,9 @@ fun main(): Unit = runBlocking {
     try {
         server.start()
 
-        client.send(OscMessage("/drum/kick"))
-        client.send(OscMessage("/drum/hihat"))
-        client.send(OscMessage("/clip/7"))
+        client.send(oscMessageOf("/drum/kick"))
+        client.send(oscMessageOf("/drum/hihat"))
+        client.send(oscMessageOf("/clip/7"))
 
         withTimeout(3_000) {
             finished.await()

@@ -81,19 +81,18 @@ On Windows:
 ### Build an OSC message
 
 ```kotlin
-import io.github.termtate.kotlinosc.type.OscMessage
-import io.github.termtate.kotlinosc.type.invoke
+import io.github.termtate.kotlinosc.type.oscMessageOf
 
-val msg = OscMessage("/synth/freq", 440, 0.8f, "lead")
+val msg = oscMessageOf("/synth/freq", 440, 0.8f, "lead")
 ```
 
 ### Build an OSC bundle (DSL)
 
 ```kotlin
 import io.github.termtate.kotlinosc.arg.OscTimetag
-import io.github.termtate.kotlinosc.type.oscBundle
+import io.github.termtate.kotlinosc.type.oscBundleOf
 
-val bundle = oscBundle(OscTimetag.IMMEDIATELY) {
+val bundle = oscBundleOf(OscTimetag.IMMEDIATELY) {
     message("/a", 1, 2.0f, "x")
     bundle {
         message("/b", true)
@@ -106,11 +105,10 @@ val bundle = oscBundle(OscTimetag.IMMEDIATELY) {
 ```kotlin
 import io.github.termtate.kotlinosc.codec.decodeFromByteArray
 import io.github.termtate.kotlinosc.codec.encodeToByteArray
-import io.github.termtate.kotlinosc.type.OscMessage
 import io.github.termtate.kotlinosc.type.OscPacket
-import io.github.termtate.kotlinosc.type.invoke
+import io.github.termtate.kotlinosc.type.oscMessageOf
 
-val message = OscMessage("/ping", "hello", 123)
+val message = oscMessageOf("/ping", "hello", 123)
 val bytes = message.encodeToByteArray()
 val decoded = OscPacket.decodeFromByteArray(bytes)
 ```
@@ -137,10 +135,10 @@ server.stop()
 
 ```kotlin
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
-import io.github.termtate.kotlinosc.type.OscMessage
+import io.github.termtate.kotlinosc.type.oscMessageOf
 
 val client = oscClient("127.0.0.1", 9000)
-client.send(OscMessage("/ping"))
+client.send(oscMessageOf("/ping"))
 client.closeAndJoin()
 ```
 
@@ -155,7 +153,7 @@ client and server must use the same framing strategy. The default TCP framing st
 ```kotlin
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
 import io.github.termtate.kotlinosc.transport.dsl.oscServer
-import io.github.termtate.kotlinosc.type.OscMessage
+import io.github.termtate.kotlinosc.type.oscMessageOf
 import kotlinx.coroutines.runBlocking
 
 runBlocking {
@@ -174,7 +172,7 @@ runBlocking {
 
     try {
         server.start()
-        client.send(OscMessage("/ping"))
+        client.send(oscMessageOf("/ping"))
     } finally {
         client.closeAndJoin()
         server.stop()
