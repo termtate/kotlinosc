@@ -94,6 +94,82 @@ class OscRouterTest {
     }
 
     @Test
+    fun `osc router default route should receive unmatched message`() = runBlocking {
+        val router = OscRouter()
+        var routeCount = 0
+        val defaultAddresses = mutableListOf<String>()
+
+        router.on("/matched") {
+            routeCount++
+        }
+
+        router.default { message ->
+            defaultAddresses += message.address
+        }
+
+        val hit = dispatcher(router).dispatch(OscMessage("/unmatched"))
+
+        assertEquals(1, hit)
+        assertEquals(0, routeCount)
+        assertEquals(listOf("/unmatched"), defaultAddresses)
+    }
+
+    @Test
+    fun `osc router default route should not run when route matches`() = runBlocking {
+        val router = OscRouter()
+        var routeCount = 0
+        var defaultCount = 0
+
+        router.on("/matched") {
+            routeCount++
+        }
+
+        router.default {
+            defaultCount++
+        }
+
+        val hit = dispatcher(router).dispatch(OscMessage("/matched"))
+
+        assertEquals(1, hit)
+        assertEquals(1, routeCount)
+        assertEquals(0, defaultCount)
+    }
+
+    @Test
+    fun `osc router default route should replace previous default route`() = runBlocking {
+        val router = OscRouter()
+        var firstDefaultCount = 0
+        var secondDefaultCount = 0
+
+        router.default {
+            firstDefaultCount++
+        }
+
+        router.default {
+            secondDefaultCount++
+        }
+
+        val hit = dispatcher(router).dispatch(OscMessage("/unmatched"))
+
+        assertEquals(1, hit)
+        assertEquals(0, firstDefaultCount)
+        assertEquals(1, secondDefaultCount)
+    }
+
+    @Test
+    fun `osc router default route should rethrow when continueOnError is false`(): Unit = runBlocking {
+        val router = OscRouter()
+
+        router.default(continueOnError = false) {
+            error("default route failed")
+        }
+
+        assertFailsWith<IllegalStateException> {
+            dispatcher(router).dispatch(OscMessage("/unmatched"))
+        }
+    }
+
+    @Test
     fun `osc router route register & unregister by pattern`() = runBlocking {
         val router = OscRouter()
         val message = OscMessage("/a")

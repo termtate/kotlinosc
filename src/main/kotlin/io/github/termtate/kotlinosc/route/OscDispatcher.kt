@@ -55,8 +55,15 @@ internal class OscDispatcher(val router: OscRouter, addressPatternConfig: OscCon
                 route.handler(message)
                 hit++
                 if (dispatchMode == DispatchMode.FIRST_MATCH) {
-                    break
+                    return hit
                 }
+            }
+        }
+        // fallback route
+        router.defaultHandler?.let { fallback ->
+            if (hit == 0) {
+                fallback(message)
+                hit++
             }
         }
         return hit

@@ -24,17 +24,10 @@ public class OscRouter : OscLogger {
 
     internal val routes = mutableListOf<Route>()
 
-    /**
-     * Registers a route handler for an OSC address pattern.
-     *
-     * @return generated route id
-     */
-    public fun on(
-        pattern: String,
-        continueOnError: Boolean = true,
-        handler: suspend (message: OscMessage) -> Unit
-    ): Int {
-        val wrappedHandler: OscMessageHandler = { message ->
+    internal var defaultHandler: OscMessageHandler? = null
+
+    private fun wrapHandler(handler: OscMessageHandler, continueOnError: Boolean): OscMessageHandler {
+        return { message ->
             if (logger.isTraceEnabled()) {
                 logger.trace { "route handler received osc message: $message" }
             }
@@ -48,9 +41,20 @@ public class OscRouter : OscLogger {
                 handler(message)
             }
         }
+    }
 
+    /**
+     * Registers a route handler for an OSC address pattern.
+     *
+     * @return generated route id
+     */
+    public fun on(
+        pattern: String,
+        continueOnError: Boolean = true,
+        handler: suspend (message: OscMessage) -> Unit
+    ): Int {
         logger.debug { "register osc route. pattern: $pattern, continueOnError: $continueOnError" }
-        val route = Route(nextRouteId, pattern, continueOnError, wrappedHandler)
+        val route = Route(nextRouteId, pattern, continueOnError, wrapHandler(handler, continueOnError))
         routes += route
         nextRouteId++
 
@@ -86,6 +90,21 @@ public class OscRouter : OscLogger {
         logger.debug { "removed osc routes by pattern: $pattern, total removed number: $delNum" }
 
         return delNum
+    }
+
+    /**
+     * Registers the fallback route handler.
+     *
+     * The fallback handler receives an [OscMessage] only when no registered
+     * route matches that message. Only one fallback handler is active at a
+     * time; registering another one replaces the previous fallback handler.
+     */
+    public fun default(
+        continueOnError: Boolean = true,
+        handler: suspend (message: OscMessage) -> Unit
+    ) {
+        logger.debug { "register osc DEFAULT route. continueOnError: $continueOnError" }
+        defaultHandler = wrapHandler(handler, continueOnError)
     }
 }
 
