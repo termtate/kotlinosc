@@ -15,9 +15,9 @@ import kotlin.time.Instant
 
 class OscBundleDslTest {
     @Test
-    fun `oscBundleOf should build OscBundle correctly`() {
+    fun `buildOscBundle should build OscBundle correctly`() {
         val now = Clock.System.now().toOscTimetag()
-        val bundle = oscBundleOf(now) {
+        val bundle = buildOscBundle(now) {
             message("/a", 1, 0.2f, "3")
 
             bundle(now) {
@@ -53,7 +53,7 @@ class OscBundleDslTest {
         val argList: List<OscArg> = listOf(OscInt32(1), OscString("x"))
         val anyList: List<Any?> = listOf(2, "y")
 
-        val bundle = oscBundleOf {
+        val bundle = buildOscBundle {
             message("/typed", argList)
             message("/boxed", anyList)
         }
@@ -76,7 +76,7 @@ class OscBundleDslTest {
             elements = listOf(oscMessageOf("/boxed", 2, "y"))
         )
 
-        val bundle = oscBundleOf {
+        val bundle = buildOscBundle {
             packet(message)
             packet(nested)
         }
@@ -91,8 +91,8 @@ class OscBundleDslTest {
     }
 
     @Test
-    fun `oscBundleOf and nested bundle should use immediately timetag by default`() {
-        val bundle = oscBundleOf {
+    fun `buildOscBundle and nested bundle should use immediately timetag by default`() {
+        val bundle = buildOscBundle {
             bundle {
                 message("/a")
             }
@@ -104,9 +104,9 @@ class OscBundleDslTest {
     }
 
     @Test
-    fun `empty oscBundleOf should keep timetag and have no elements`() {
+    fun `empty buildOscBundle should keep timetag and have no elements`() {
         val t = Instant.fromEpochSeconds(42).toOscTimetag()
-        val bundle = oscBundleOf(t) { }
+        val bundle = buildOscBundle(t) { }
 
         assertEquals(t, bundle.timeTag)
         assertTrue(bundle.elements.isEmpty())
@@ -114,7 +114,7 @@ class OscBundleDslTest {
 
     @Test
     fun `OscBundle toString should format nested bundles readably`() {
-        val bundle = oscBundleOf {
+        val bundle = buildOscBundle {
             message("/a", 1, "x")
             bundle {
                 message("/b", true)

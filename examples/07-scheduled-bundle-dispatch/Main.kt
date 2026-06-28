@@ -3,7 +3,7 @@ package examples.scheduledbundledispatch
 import io.github.termtate.kotlinosc.arg.toOscTimetag
 import io.github.termtate.kotlinosc.transport.dsl.oscClient
 import io.github.termtate.kotlinosc.transport.dsl.oscServer
-import io.github.termtate.kotlinosc.type.oscBundleOf
+import io.github.termtate.kotlinosc.type.buildOscBundle
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -30,7 +30,7 @@ fun main(): Unit = runBlocking {
         server.start()
 
         val dueAt = Clock.System.now() + 1500.milliseconds
-        val bundle = oscBundleOf(dueAt.toOscTimetag()) {
+        val bundle = buildOscBundle(dueAt.toOscTimetag()) {
             message("/scheduled/demo", "hello at a later timetag")
         }
 

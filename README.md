@@ -90,9 +90,9 @@ val msg = oscMessageOf("/synth/freq", 440, 0.8f, "lead")
 
 ```kotlin
 import io.github.termtate.kotlinosc.arg.OscTimetag
-import io.github.termtate.kotlinosc.type.oscBundleOf
+import io.github.termtate.kotlinosc.type.buildOscBundle
 
-val bundle = oscBundleOf(OscTimetag.IMMEDIATELY) {
+val bundle = buildOscBundle(OscTimetag.IMMEDIATELY) {
     message("/a", 1, 2.0f, "x")
     bundle {
         message("/b", true)

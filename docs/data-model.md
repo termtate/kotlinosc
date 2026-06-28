@@ -38,7 +38,7 @@ val message = OscMessage("/path", listOf(OscInt32(1), OscString("x")))
 
 Entry:
 
-- `oscBundleOf(timetag = OscTimetag.IMMEDIATELY) { ... }`
+- `buildOscBundle(timetag = OscTimetag.IMMEDIATELY) { ... }`
 
 Builder:
 
@@ -49,7 +49,7 @@ Builder:
 Example:
 
 ```kotlin
-val packet = oscBundleOf {
+val packet = buildOscBundle {
     message("/a", 1, "x")
     bundle {
         message("/b", true)

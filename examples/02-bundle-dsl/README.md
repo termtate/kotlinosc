@@ -2,7 +2,7 @@
 
 Shows how to:
 
-- build a bundle with `oscBundleOf`
+- build a bundle with `buildOscBundle`
 - add nested messages
 - add a nested bundle
 

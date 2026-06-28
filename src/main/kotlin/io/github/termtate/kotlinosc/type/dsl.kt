@@ -26,7 +26,7 @@ public class OscBundleBuilder(public val timetag: OscTimetag) {
      * Adds one nested [OscBundle].
      */
     public fun bundle(timetag: OscTimetag = OscTimetag.IMMEDIATELY, builder: OscBundleBuilder.() -> Unit) {
-        packets += oscBundleOf(timetag, builder)
+        packets += buildOscBundle(timetag, builder)
     }
 
     /**

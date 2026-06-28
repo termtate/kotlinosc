@@ -9,7 +9,7 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 ### Added
 
 - Added `oscMessageOf(address, vararg args)` for building `OscMessage` values from regular Kotlin values.
-- Added `oscBundleOf(timetag) { ... }` as the bundle DSL entry point.
+- Added `buildOscBundle(timetag) { ... }` as the bundle DSL entry point.
 - Added `OscBundleBuilder.packet(packet)` for adding prebuilt messages or nested bundles to a bundle DSL block.
 
 ### Changed
@@ -34,7 +34,7 @@ val bundle = oscBundle {
 
 // After
 val message = oscMessageOf("/path", 1, "x")
-val bundle = oscBundleOf {
+val bundle = buildOscBundle {
     message("/a", listOf(1, 2)) // one OscArray argument
 }
 

@@ -53,7 +53,7 @@ public data class OscBundle(
  *
  * Example:
  * ```kotlin
- * val packet = oscBundleOf {
+ * val packet = buildOscBundle {
  *     message("/a", 1, "x")
  *     bundle {
  *         message("/b", true)
@@ -61,7 +61,7 @@ public data class OscBundle(
  * }
  * ```
  */
-public fun oscBundleOf(
+public fun buildOscBundle(
     timetag: OscTimetag = OscTimetag.IMMEDIATELY,
     builder: OscBundleBuilder.() -> Unit
 ): OscBundle = OscBundleBuilder(timetag).apply(builder).build()
