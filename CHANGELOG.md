@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project follows Semantic Versioning once stable releases start.
 
-## [Unreleased]
+## [0.4.0] - 2026-06-28
 
 ### Added
 
@@ -16,6 +16,11 @@ The format is based on Keep a Changelog, and this project follows Semantic Versi
 
 - `OscBundleBuilder.message` now has a single `message(address, vararg args: Any?)` form and uses the same boxing rules as `oscMessageOf`.
 - `List` and `Array` values passed to `oscMessageOf` or bundle `message` are treated as one OSC array argument. Spread a collection explicitly when passing it as multiple message arguments.
+- `OscServerBackend` is now one-shot, and its `receivedPackets` flow closes when `OscServerBackend.stop()` completes.
+
+### Fixed
+
+- Fixed an intermittent `TcpOscServerBackend.stop()` failure caused by snapshotting active TCP clients while client read loops were removing themselves concurrently.
 
 ### Removed
 
