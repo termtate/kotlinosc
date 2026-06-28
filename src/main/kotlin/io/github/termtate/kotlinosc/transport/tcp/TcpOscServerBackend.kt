@@ -181,11 +181,12 @@ internal class TcpOscServerBackend(
         recvJob?.cancelAndJoin()
         recvJob = null
 
-        val snapshot = clients.toMap()
+        // Do not use clients.toMap(): ConcurrentHashMap may change during Kotlin's size-based toMap optimization.
+        val snapshot = clients.entries.map { it.key to it.value }
 
         snapshot.forEach { (id, conn) -> closeQuietly(conn.socket, id) }
 
-        snapshot.values.forEach { it.job.cancelAndJoin() }
+        snapshot.forEach { (_, conn) ->  conn.job.cancelAndJoin() }
         bufferedPackets.close()
     }
 
