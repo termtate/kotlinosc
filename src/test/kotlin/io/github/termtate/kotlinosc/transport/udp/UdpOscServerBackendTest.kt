@@ -2,6 +2,7 @@ package io.github.termtate.kotlinosc.transport.udp
 
 import io.github.termtate.kotlinosc.codec.encodeToByteArray
 import io.github.termtate.kotlinosc.exception.OscCodecException
+import io.github.termtate.kotlinosc.exception.OscLifecycleException
 import io.github.termtate.kotlinosc.type.OscMessage
 import io.github.termtate.kotlinosc.io.OscByteWriter
 import io.github.termtate.kotlinosc.transport.OscTransportHook
@@ -18,6 +19,7 @@ import java.net.DatagramSocket
 import java.net.InetSocketAddress
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
@@ -41,6 +43,28 @@ class UdpOscServerBackendTest {
             assertTrue(parentJob.isActive)
         } finally {
             backend.stop()
+            scope.cancel()
+        }
+    }
+
+    @Test
+    fun `start should throw after stop`() = runBlocking {
+        val scope = CoroutineScope(Job() + Dispatchers.Default)
+        val backend = UdpOscServerBackend(
+            scope = scope,
+            bindAddress = InetSocketAddress("127.0.0.1", getAvailablePort())
+        )
+
+        try {
+            backend.start()
+            backend.stop()
+
+            assertFailsWith<OscLifecycleException> {
+                backend.start()
+            }
+
+            backend.stop()
+        } finally {
             scope.cancel()
         }
     }

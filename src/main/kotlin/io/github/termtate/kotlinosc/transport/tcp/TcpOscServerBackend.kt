@@ -4,6 +4,7 @@ import io.github.termtate.kotlinosc.codec.OscPacketCodecImpl
 import io.github.termtate.kotlinosc.config.OscConfig
 import io.github.termtate.kotlinosc.exception.OscCodecException
 import io.github.termtate.kotlinosc.exception.OscFrameException
+import io.github.termtate.kotlinosc.exception.OscLifecycleException
 import io.github.termtate.kotlinosc.exception.OscTransportException
 import io.github.termtate.kotlinosc.io.OscByteReader
 import io.github.termtate.kotlinosc.transport.DEFAULT_CHANNEL_CAPACITY
@@ -25,7 +26,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -53,7 +54,7 @@ internal class TcpOscServerBackend(
     )
 
     override val receivedPackets: Flow<ReceivedPacket>
-        get() = bufferedPackets.consumeAsFlow()
+        get() = bufferedPackets.receiveAsFlow()
 
     private val socket: ServerSocket = ServerSocket().apply {
         reuseAddress = true
@@ -61,6 +62,7 @@ internal class TcpOscServerBackend(
     }
 
     private var recvJob: Job? = null
+    private var stopped: Boolean = false
 
     private val codec = OscPacketCodecImpl(codecConfig)
 
@@ -71,6 +73,9 @@ internal class TcpOscServerBackend(
     private val clients: MutableMap<Long, ClientConnection> = ConcurrentHashMap()
 
     override suspend fun start() {
+        if (stopped) {
+            throw OscLifecycleException("TcpOscServerBackend.start() cannot be called after stop()")
+        }
         if (recvJob != null) {
             return
         }
@@ -168,6 +173,10 @@ internal class TcpOscServerBackend(
     }
 
     override suspend fun stop() {
+        if (stopped) {
+            return
+        }
+        stopped = true
         socket.close()
         recvJob?.cancelAndJoin()
         recvJob = null
@@ -177,6 +186,7 @@ internal class TcpOscServerBackend(
         snapshot.forEach { (id, conn) -> closeQuietly(conn.socket, id) }
 
         snapshot.values.forEach { it.job.cancelAndJoin() }
+        bufferedPackets.close()
     }
 
     companion object {

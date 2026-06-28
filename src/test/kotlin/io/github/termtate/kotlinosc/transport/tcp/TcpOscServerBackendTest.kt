@@ -3,6 +3,7 @@ package io.github.termtate.kotlinosc.transport.tcp
 import io.github.termtate.kotlinosc.codec.OscPacketCodecImpl
 import io.github.termtate.kotlinosc.config.OscConfig
 import io.github.termtate.kotlinosc.exception.OscCodecException
+import io.github.termtate.kotlinosc.exception.OscLifecycleException
 import io.github.termtate.kotlinosc.io.OscByteWriter
 import io.github.termtate.kotlinosc.transport.OscTransportHook
 import io.github.termtate.kotlinosc.transport.TcpPeer
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
@@ -143,6 +145,29 @@ class TcpOscServerBackendTest {
         } finally {
             client.close()
             backend.stop()
+            scope.cancel()
+        }
+    }
+
+    @Test
+    fun `start should throw after stop`() = runBlocking {
+        val scope = CoroutineScope(Job() + Dispatchers.Default)
+        val backend = TcpOscServerBackend(
+            scope = scope,
+            bindAddress = localAddress(),
+            framingStrategy = OscTcpFramingStrategy.LENGTH_PREFIXED
+        )
+
+        try {
+            backend.start()
+            backend.stop()
+
+            assertFailsWith<OscLifecycleException> {
+                backend.start()
+            }
+
+            backend.stop()
+        } finally {
             scope.cancel()
         }
     }

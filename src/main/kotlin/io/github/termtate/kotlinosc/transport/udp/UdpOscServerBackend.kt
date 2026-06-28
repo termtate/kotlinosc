@@ -3,16 +3,14 @@ package io.github.termtate.kotlinosc.transport.udp
 import io.github.termtate.kotlinosc.codec.OscPacketCodecImpl
 import io.github.termtate.kotlinosc.config.OscConfig
 import io.github.termtate.kotlinosc.exception.OscCodecException
+import io.github.termtate.kotlinosc.exception.OscLifecycleException
 import io.github.termtate.kotlinosc.exception.OscTransportException
 import io.github.termtate.kotlinosc.io.OscByteReader
-import io.github.termtate.kotlinosc.io.OscByteWriter
 import io.github.termtate.kotlinosc.transport.DEFAULT_CHANNEL_CAPACITY
-import io.github.termtate.kotlinosc.transport.OscPeer
 import io.github.termtate.kotlinosc.transport.OscServerBackend
 import io.github.termtate.kotlinosc.transport.OscTransportHook
 import io.github.termtate.kotlinosc.transport.ReceivedPacket
 import io.github.termtate.kotlinosc.transport.UdpPeer
-import io.github.termtate.kotlinosc.type.OscPacket
 import io.github.termtate.kotlinosc.util.OscLogger
 import io.github.termtate.kotlinosc.util.logger
 import kotlinx.coroutines.CancellationException
@@ -24,7 +22,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.net.DatagramPacket
@@ -46,6 +44,7 @@ internal class UdpOscServerBackend(
     private val socket = DatagramSocket(bindAddress)
     private val codec = OscPacketCodecImpl(codecConfig)
     private var recvJob: Job? = null
+    private var stopped: Boolean = false
 
     private val bufferedPackets = Channel<ReceivedPacket>(
         capacity = receiveChannelCapacity,
@@ -53,9 +52,12 @@ internal class UdpOscServerBackend(
     )
 
     override val receivedPackets: Flow<ReceivedPacket>
-        get() = bufferedPackets.consumeAsFlow()
+        get() = bufferedPackets.receiveAsFlow()
 
     override suspend fun start() {
+        if (stopped) {
+            throw OscLifecycleException("UdpOscServerBackend.start() cannot be called after stop()")
+        }
         if (recvJob != null) {
             return
         }
@@ -63,9 +65,14 @@ internal class UdpOscServerBackend(
     }
 
     override suspend fun stop() {
+        if (stopped) {
+            return
+        }
+        stopped = true
         socket.close()
         recvJob?.cancelAndJoin()
         recvJob = null
+        bufferedPackets.close()
     }
 
     private suspend fun receiveLoop() {
